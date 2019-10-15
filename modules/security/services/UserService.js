@@ -1,5 +1,6 @@
 import {User} from './../models/User'
 import bcryptjs from 'bcryptjs'
+import UserEmailManager from './UserEmailManager'
 const jsonwebtoken = require('jsonwebtoken')
 
 export const auth = function ({username, password}) {
@@ -61,7 +62,7 @@ export const updateUser = function (id, {username, name, email, phone, roles, ac
     let updatedAt = Date.now()
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
-            {_id: id}, {username, name, email, phone, roles, active,updatedAt}, {new: true},
+            {_id: id}, {username, name, email, phone, roles, active, updatedAt}, {new: true},
             (error, user) => {
                 if (error) rejects(error)
                 else resolve(user)
@@ -73,13 +74,50 @@ export const updateUser = function (id, {username, name, email, phone, roles, ac
 export const deleteUser = function (id) {
     return new Promise((resolve, rejects) => {
         User.remove(
-            {_id: id},{},
+            {_id: id}, {},
             (error, user) => {
                 if (error) rejects(error)
                 else resolve(true)
             }
         );
     })
+}
+
+export const registerUser = function ({username, password, name, email, phone}) {
+
+    console.log("Register User:"+password)
+    let salt = bcryptjs.genSaltSync(10);
+    let hash = bcryptjs.hashSync(password, salt);
+
+    let active = false;
+    let roleId = 1;
+    let roles = "user";
+
+    const newUser = new User({
+        username,
+        email,
+        password: hash,
+        name,
+        phone,
+        roles: roles,
+        active,
+        createdAt: Date.now()
+
+    })
+    newUser.id = newUser._id;
+
+    return new Promise((resolve, rejects) => {
+        newUser.save((error => {
+            if(error){
+                rejects(error)
+            }
+            else{
+                UserEmailManager.activation(newUser.email);
+                resolve({status: true, id: newUser.id, email: newUser.email});
+            }
+        }))
+    })
+
 }
 
 
@@ -105,4 +143,30 @@ export const findUserByUsername = function (id) {
             err ? reject(err) : resolve(res)
         ));
     })
+}
+
+
+export const changePassword = function (id, {password, passwordVerify}) {
+
+    if (password == passwordVerify) {
+
+        let salt = bcryptjs.genSaltSync(10);
+        let hash = bcryptjs.hashSync(password, salt);
+
+        return new Promise((resolve, rejects) => {
+            User.findOneAndUpdate(
+                {_id: id}, {password: hash}, {new: true},
+                (error, user) => {
+                    if (error) rejects({status: false, message: "Falla al intentar modificar password"})
+                    else resolve({status: true, message: "Password modificada con exito"})
+                }
+            );
+        })
+
+
+    } else {
+        return new Promise((resolve, rejects) => {
+            resolve({status: false, message: "Las password no concuerdan"})
+        })
+    }
 }

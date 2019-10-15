@@ -40,7 +40,7 @@ type CreateUserResponse{
 
 type RegisterUserResponse{
     status: Boolean!,
-    id: Int!,
+    id: String!,
     email: String!
 }
 
@@ -58,6 +58,14 @@ input UserInput{
     #roles: Role
 }
 
+input RegisterInput{
+    username: String!
+    name: String!
+    email: String!
+    password: String!
+    phone: String
+}
+
 type Query {
     users: [User!]
     user(id: ID!): User
@@ -70,10 +78,10 @@ type Mutation {
     updateUser(id: ID!, input: UserInput): User
     deleteUser(id: ID!): Boolean!
 
-    #registerUser(username: String, password:String, name:String, email:String, phone:String): RegisterUserResponse
+    registerUser(input: RegisterInput): RegisterUserResponse
 
     #recoveryPassword(email:String!):RecoverPasswordResponse!
-    #changePassword( password:String!, passwordVerify:String!): ChangePasswordResponse!
+    changePassword( password:String!, passwordVerify:String!): ChangePasswordResponse!
 
     #avatarUpload(file: Upload!): File!
 }

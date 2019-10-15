@@ -1,4 +1,13 @@
-import {createUser, updateUser, deleteUser, findUsers, findUser, auth} from '../../services/UserService'
+import {
+    createUser,
+    updateUser,
+    deleteUser,
+    findUsers,
+    findUser,
+    auth,
+    changePassword,
+    registerUser
+} from '../../services/UserService'
 
 export const userResolvers = {
     Query: {
@@ -8,7 +17,7 @@ export const userResolvers = {
         user: (_, {id}) => {
             return findUser(id)
         },
-        me: (_, input, {user}) => {
+        me: (_, {}, {user}) => {
             return findUser(user.id)
         }
     },
@@ -25,6 +34,12 @@ export const userResolvers = {
         deleteUser: (_, {id}) => {
             return deleteUser(id)
         },
+        changePassword: (_, {password, passwordVerify}, {user}) => {
+            return changePassword(user.id, {password, passwordVerify})
+        },
+        registerUser: (_, {input}) => {
+            return registerUser(input)
+        }
     }
 
 }
