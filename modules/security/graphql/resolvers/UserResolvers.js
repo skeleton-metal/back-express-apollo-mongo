@@ -9,7 +9,7 @@ import {
     registerUser
 } from '../../services/UserService'
 
-export const userResolvers = {
+export default {
     Query: {
         users: () => {
             return findUsers()

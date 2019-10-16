@@ -3,6 +3,6 @@ type Message{
 }
 
 
-type Query{
+extend type Query{
     message: Message!
 }

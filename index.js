@@ -1,11 +1,7 @@
 import express from 'express';
 import {ApolloServer} from 'apollo-server-express'
-import {typeDefs} from './modules/security/graphql/SecuritySchema'
-import {resolvers} from './modules/security/graphql/SecurityResolvers'
+import {resolvers,typeDefs} from './modules-merge'
 import {jwtAuth,handleAuthError} from './modules/security/middleware/authMiddleware'
-
-
-console.log(resolvers)
 
 //Mongo Init
 import mongoose from 'mongoose'

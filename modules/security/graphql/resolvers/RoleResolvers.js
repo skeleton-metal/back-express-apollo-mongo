@@ -1,6 +1,6 @@
 import {createRole, findRole, findRoles} from '../../services/RoleService'
 
-export const roleResolvers = {
+export default {
     Query: {
         roles: () => {
             return findRoles()

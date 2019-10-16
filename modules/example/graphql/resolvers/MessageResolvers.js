@@ -1,8 +1,8 @@
 
-export const messageResolvers = {
+export default {
     Query: {
         message: () => {
-            return "Hello Wordl"
+            return {text:"hello World"}
         },
     },
     Mutation: {
