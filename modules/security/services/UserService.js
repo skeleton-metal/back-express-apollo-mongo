@@ -7,7 +7,7 @@ export const auth = function ({username, password}) {
     return new Promise((resolve, reject) => {
         findUserByUsername(username).then(user => {
             if (!user) {
-                throw new Error('No user with that username/email')
+                reject('No user with that username/email')
             }
             if (user) {
                 if (bcryptjs.compareSync(password, user.password)) {
@@ -24,7 +24,7 @@ export const auth = function ({username, password}) {
                     )
                     return resolve({token: token, user: user})
                 } else {
-                    throw new Error('Incorrect password')
+                    reject('Incorrect password')
                 }
             }
         })
