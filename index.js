@@ -1,9 +1,10 @@
 import express from 'express';
+import {} from './mongo-db'
 import {ApolloServer} from 'apollo-server-express'
 import {resolvers,typeDefs} from './modules-merge'
 import {jwtAuth,handleAuthError} from './modules/security/middleware/authMiddleware'
 import corsMiddleware from "./modules/security/middleware/corsMiddleware";
-import {} from './mongo-db'
+
 
 const app = express();
 

@@ -32,7 +32,7 @@ export const findRole = function (id) {
 
 export const findRoleByName = function (roleName) {
     return new Promise((resolve, reject) => {
-        User.findOne({name: roleName}).exec((err, res) => (
+        Role.findOne({name: roleName}).exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })

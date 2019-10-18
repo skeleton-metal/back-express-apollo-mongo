@@ -10,7 +10,10 @@ const UserSchema = new mongoose.Schema({
     phone: {type: String, required: false},
     avatar: String,
     avatarurl: String,
-    roles: {type: Array, default: ["user"]},
+    role: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Role'
+    },
     createdAt: {type: Date, required: true},
     updatedAt: {type: Date, required: true, default: Date.now},
 });

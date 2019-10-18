@@ -1,6 +1,9 @@
 import {User} from './../models/User'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
+import {findRoleByName} from "./RoleService";
+import {Role} from "../models/Role";
+
 const jsonwebtoken = require('jsonwebtoken')
 
 export const auth = function ({username, password}) {
@@ -33,7 +36,7 @@ export const auth = function ({username, password}) {
 
 }
 
-export const createUser = function ({username, password, name, email, phone, roles, active}) {
+export const createUser = function ({username, password, name, email, phone, role, active}) {
     let salt = bcryptjs.genSaltSync(10);
     let hashPassword = bcryptjs.hashSync(password, salt);
 
@@ -43,7 +46,7 @@ export const createUser = function ({username, password, name, email, phone, rol
         password: hashPassword,
         name,
         phone,
-        roles: roles,
+        role,
         active,
         createdAt: Date.now()
 
@@ -58,11 +61,11 @@ export const createUser = function ({username, password, name, email, phone, rol
 }
 
 
-export const updateUser = function (id, {username, name, email, phone, roles, active}) {
+export const updateUser = function (id, {username, name, email, phone, role, active}) {
     let updatedAt = Date.now()
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
-            {_id: id}, {username, name, email, phone, roles, active, updatedAt}, {new: true},
+            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {new: true},
             (error, user) => {
                 if (error) rejects(error)
                 else resolve(user)
@@ -85,38 +88,50 @@ export const deleteUser = function (id) {
 
 export const registerUser = function ({username, password, name, email, phone}) {
 
-    console.log("Register User:"+password)
-    let salt = bcryptjs.genSaltSync(10);
-    let hash = bcryptjs.hashSync(password, salt);
+    console.log("Register User:" + password)
 
-    let active = false;
-    let roleId = 1;
-    let roles = "user";
-
-    const newUser = new User({
-        username,
-        email,
-        password: hash,
-        name,
-        phone,
-        roles: roles,
-        active,
-        createdAt: Date.now()
-
-    })
-    newUser.id = newUser._id;
 
     return new Promise((resolve, rejects) => {
-        newUser.save((error => {
-            if(error){
-                rejects(error)
-            }
-            else{
-                UserEmailManager.activation(newUser.email);
-                resolve({status: true, id: newUser.id, email: newUser.email});
-            }
-        }))
+
+        let salt = bcryptjs.genSaltSync(10);
+        let hash = bcryptjs.hashSync(password, salt);
+
+        let active = false;
+        const ROLE_NAME = "user";
+
+        const newUser = new User({
+            username,
+            email,
+            password: hash,
+            name,
+            phone,
+            active,
+            createdAt: Date.now()
+
+        })
+        newUser.id = newUser._id;
+
+        findRoleByName(ROLE_NAME).then(role => {
+
+            newUser.role = role;
+
+            newUser.save((error => {
+                if (error) {
+                    rejects(error)
+                } else {
+                    UserEmailManager.activation(newUser.email);
+                    resolve({status: true, id: newUser.id, email: newUser.email});
+                }
+            }))
+
+
+        }).catch(err => {
+            rejects(err)
+        })
+
+
     })
+
 
 }
 
