@@ -138,7 +138,7 @@ export const registerUser = function ({username, password, name, email, phone}) 
 
 export const findUsers = function () {
     return new Promise((resolve, reject) => {
-        User.find({}).exec((err, res) => (
+        User.find({}).populate('role').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
@@ -146,7 +146,7 @@ export const findUsers = function () {
 
 export const findUser = function (id) {
     return new Promise((resolve, reject) => {
-        User.findOne({_id: id}).exec((err, res) => (
+        User.findOne({_id: id}).populate('role').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
@@ -154,7 +154,7 @@ export const findUser = function (id) {
 
 export const findUserByUsername = function (id) {
     return new Promise((resolve, reject) => {
-        User.findOne({username: id}).exec((err, res) => (
+        User.findOne({username: id}).populate('role').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
