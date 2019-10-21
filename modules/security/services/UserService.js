@@ -54,21 +54,18 @@ export const createUser = async function ({username, password, name, email, phon
     })
     newUser.id = newUser._id;
 
-    await findRole(role).then((response) => {
-        roleObject = response
-    })
+    roleObject = await findRole(role)
 
     return new Promise((resolve, rejects) => {
         newUser.save((error => {
             if (error) rejects(error)
             else {
-                resolve(newUser)
                 newUser.role = roleObject
+                resolve(newUser)
+
             }
         }))
     })
-
-
 }
 
 
@@ -76,9 +73,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
     let updatedAt = Date.now()
     let roleObject = {}
 
-    await findRole(role).then((response) => {
-        roleObject = response
-    })
+    roleObject = await findRole(role)
 
 
     return new Promise((resolve, rejects) => {
@@ -87,8 +82,8 @@ export const updateUser = async function (id, {username, name, email, phone, rol
             (error, user) => {
                 if (error) rejects(error)
                 else {
-                    resolve(user)
                     user.role = roleObject
+                    resolve(user)
                 }
             }
         );
@@ -107,10 +102,10 @@ export const deleteUser = function (id) {
     })
 }
 
-export const registerUser = function ({username, password, name, email, phone}) {
+export const registerUser = async function ({username, password, name, email, phone}) {
 
-    console.log("Register User:" + password)
-
+    const ROLE_NAME = "user";
+    let roleObject = await findRoleByName(ROLE_NAME)
 
     return new Promise((resolve, rejects) => {
 
@@ -118,7 +113,7 @@ export const registerUser = function ({username, password, name, email, phone}) 
         let hash = bcryptjs.hashSync(password, salt);
 
         let active = false;
-        const ROLE_NAME = "user";
+
 
         const newUser = new User({
             username,
@@ -127,29 +122,20 @@ export const registerUser = function ({username, password, name, email, phone}) 
             name,
             phone,
             active,
+            role: roleObject,
             createdAt: Date.now()
 
         })
         newUser.id = newUser._id;
 
-        findRoleByName(ROLE_NAME).then(role => {
-
-            newUser.role = role;
-
-            newUser.save((error => {
-                if (error) {
-                    rejects(error)
-                } else {
-                    UserEmailManager.activation(newUser.email);
-                    resolve({status: true, id: newUser.id, email: newUser.email});
-                }
-            }))
-
-
-        }).catch(err => {
-            rejects(err)
-        })
-
+        newUser.save((error => {
+            if (error) {
+                rejects(error)
+            } else {
+                UserEmailManager.activation(newUser.email);
+                resolve({status: true, id: newUser.id, email: newUser.email});
+            }
+        }))
 
     })
 
