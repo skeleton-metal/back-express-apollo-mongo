@@ -1,5 +1,5 @@
 type Role {
-    id: _id!
+    id: ID!
     name: String!
     permissions: [String]
 }
@@ -11,7 +11,7 @@ input RoleInput{
 
 type Query {
     roles: [Role]
-    role(id:_id!): Role
+    role(id:ID!): Role
 }
 
 type Mutation {

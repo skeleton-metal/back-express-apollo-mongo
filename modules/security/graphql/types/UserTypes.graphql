@@ -1,5 +1,5 @@
 type User {
-    id: _id!
+    id: ID!
     username: String!
     name: String!
     email: String!
@@ -12,7 +12,6 @@ type User {
     updatedAt: String
 }
 
-scalar _id
 
 type Token {
     token:String!
@@ -58,6 +57,7 @@ input UserInput{
     password: String
     phone: String
     role: String!
+    active: Boolean!
 }
 
 input RegisterInput{
@@ -77,8 +77,8 @@ type Query {
 type Mutation {
     auth(username: String!, password:String!): Token
     createUser(input: UserInput): User
-    updateUser(id: _id!, input: UserInput): User
-    deleteUser(id: _id!): Boolean!
+    updateUser(id: ID!, input: UserInput): User
+    deleteUser(id: ID!): Boolean!
 
     registerUser(input: RegisterInput): RegisterUserResponse
 
