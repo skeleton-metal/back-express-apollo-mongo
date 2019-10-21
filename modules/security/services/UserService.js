@@ -1,7 +1,7 @@
 import {User} from './../models/User'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
-import {findRoleByName} from "./RoleService";
+import {findRoleByName, findRole} from "./RoleService";
 import {Role} from "../models/Role";
 
 const jsonwebtoken = require('jsonwebtoken')
@@ -36,9 +36,10 @@ export const auth = function ({username, password}) {
 
 }
 
-export const createUser = function ({username, password, name, email, phone, role, active}) {
+export const createUser = async function ({username, password, name, email, phone, role, active}) {
     let salt = bcryptjs.genSaltSync(10);
     let hashPassword = bcryptjs.hashSync(password, salt);
+    let roleObject = {}
 
     const newUser = new User({
         username,
@@ -53,22 +54,42 @@ export const createUser = function ({username, password, name, email, phone, rol
     })
     newUser.id = newUser._id;
 
+    await findRole(role).then((response) => {
+        roleObject = response
+    })
+
     return new Promise((resolve, rejects) => {
         newUser.save((error => {
-            error ? rejects(error) : resolve(newUser)
+            if (error) rejects(error)
+            else {
+                resolve(newUser)
+                newUser.role = roleObject
+            }
         }))
     })
+
+
 }
 
 
-export const updateUser = function (id, {username, name, email, phone, role, active}) {
+export const updateUser = async function (id, {username, name, email, phone, role, active}) {
     let updatedAt = Date.now()
+    let roleObject = {}
+
+    await findRole(role).then((response) => {
+        roleObject = response
+    })
+
+
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
             {_id: id}, {username, name, email, phone, role, active, updatedAt}, {new: true},
             (error, user) => {
                 if (error) rejects(error)
-                else resolve(user)
+                else {
+                    resolve(user)
+                    user.role = roleObject
+                }
             }
         );
     })
