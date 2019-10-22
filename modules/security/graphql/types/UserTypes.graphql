@@ -35,7 +35,7 @@ type File {
     url: String!
 }
 
-type CreateUserResponse{
+type SaveUserResponse{
     user: User
 }
 
@@ -44,11 +44,6 @@ type RegisterUserResponse{
     id: String!,
     email: String!
 }
-
-type UpdateUserResponse{
-    user: User
-}
-
 
 input UserInput{
     username: String!
@@ -76,8 +71,8 @@ type Query {
 
 type Mutation {
     auth(username: String!, password:String!): Token
-    createUser(input: UserInput): User
-    updateUser(id: ID!, input: UserInput): User
+    createUser(input: UserInput): SaveUserResponse
+    updateUser(id: ID!, input: UserInput): SaveUserResponse
     deleteUser(id: ID!): Boolean!
 
     registerUser(input: RegisterInput): RegisterUserResponse

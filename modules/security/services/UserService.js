@@ -61,7 +61,7 @@ export const createUser = async function ({username, password, name, email, phon
             if (error) rejects(error)
             else {
                 newUser.role = roleObject
-                resolve(newUser)
+                resolve({user:newUser})
 
             }
         }))
@@ -83,7 +83,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                 if (error) rejects(error)
                 else {
                     user.role = roleObject
-                    resolve(user)
+                    resolve({user:user})
                 }
             }
         );
