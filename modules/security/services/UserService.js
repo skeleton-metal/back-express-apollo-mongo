@@ -61,7 +61,7 @@ export const createUser = async function ({username, password, name, email, phon
             if (error) rejects(error)
             else {
                 newUser.role = roleObject
-                resolve({user:newUser})
+                resolve({user: newUser})
 
             }
         }))
@@ -83,7 +83,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                 if (error) rejects(error)
                 else {
                     user.role = roleObject
-                    resolve({user:user})
+                    resolve({user: user})
                 }
             }
         );
@@ -191,4 +191,19 @@ export const changePassword = function (id, {password, passwordVerify}) {
             resolve({status: false, message: "Las password no concuerdan"})
         })
     }
+}
+
+
+export const recoveryPassword = function (email) {
+
+    return new Promise((resolve, rejects) => {
+        User.findOne({email: email}).then((response) => {
+            if (response) {
+                UserEmailManager.recovery(email)
+                resolve({status: true, message: "Se envio un mail para recuperar tu contraseña"})
+            } else rejects({status: false, message: "No se encontro el usuario"})
+        }).catch((error) => {
+            if (error) rejects({status: false, message: "Fallo interno del servidor "})
+        })
+    })
 }

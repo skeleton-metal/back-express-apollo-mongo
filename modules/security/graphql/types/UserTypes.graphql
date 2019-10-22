@@ -77,7 +77,7 @@ type Mutation {
 
     registerUser(input: RegisterInput): RegisterUserResponse
 
-    #recoveryPassword(email:String!):RecoverPasswordResponse!
+    recoveryPassword(email:String!):RecoverPasswordResponse!
     changePassword( password:String!, passwordVerify:String!): ChangePasswordResponse!
 
     #avatarUpload(file: Upload!): File!

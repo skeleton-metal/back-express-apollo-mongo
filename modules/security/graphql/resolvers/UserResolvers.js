@@ -6,7 +6,8 @@ import {
     findUser,
     auth,
     changePassword,
-    registerUser
+    registerUser,
+    recoveryPassword
 } from '../../services/UserService'
 
 export default {
@@ -39,6 +40,9 @@ export default {
         },
         registerUser: (_, {input}) => {
             return registerUser(input)
+        },
+        recoveryPassword: (_, {email}) => {
+            return recoveryPassword(email)
         }
     }
 

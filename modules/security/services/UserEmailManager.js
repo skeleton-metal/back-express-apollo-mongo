@@ -1,9 +1,9 @@
 require('dotenv').config();
 import nodemailer from "nodemailer"
 
-class UserEmailManager{
+class UserEmailManager {
 
-    constructor(){
+    constructor() {
 
         this.transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
@@ -16,11 +16,23 @@ class UserEmailManager{
         });
     }
 
-    recovery(){
-
+    recovery(to) {
+        this.sendmail(
+            {
+                from: process.env.SMTP_USER,
+                to: to,
+                subject: process.env.APP_NAME + " - Recuperacion de contraseña ",
+                text: "Su nueva contraseña es:  ",
+                html: "<p>Su nueva contraseña es:  </p>"
+            }
+        ).then(result => {
+            console.log(result)
+        }).catch((err) => {
+            console.log(err)
+        })
     }
 
-    activation(to){
+    activation(to) {
 
         this.sendmail(
             {
@@ -32,13 +44,13 @@ class UserEmailManager{
             }
         ).then(result => {
             console.log(result)
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err)
         })
     }
 
 
-    async sendmail({from,to,subject,text,html}){
+    async sendmail({from, to, subject, text, html}) {
         let info = await this.transporter.sendMail({
             from: from,
             to: to, //LIST  1,2,3
