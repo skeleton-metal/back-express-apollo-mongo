@@ -3,7 +3,18 @@ import mongoose from 'mongoose';
 // Defining user Mongoose Schema
 const UserSchema = new mongoose.Schema({
     username: {type: String, unique : true, required : true, dropDups: true },
-    email: {type: String, unique : true, required : true, dropDups: true },
+    email: {
+        type: String,
+        unique : true,
+        required : true,
+        dropDups: true,
+        validate: {
+            validator: function(value){
+                return false
+            },
+            message: "El email no tiene un formato valido"
+        }
+    },
     password: {type: String, required: true},
     name: {type: String, required: true},
     active: {type: Boolean, required: true, default: false},

@@ -3,7 +3,7 @@ import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
 import {findRoleByName, findRole} from "./RoleService";
 import {Role} from "../models/Role";
-
+import {UserInputError} from 'apollo-server-express'
 const jsonwebtoken = require('jsonwebtoken')
 
 export const auth = function ({username, password}) {
@@ -58,7 +58,13 @@ export const createUser = async function ({username, password, name, email, phon
 
     return new Promise((resolve, rejects) => {
         newUser.save((error => {
-            if (error) rejects(error)
+            if (error){
+                console.log(error.name)
+                if(error.name == "ValidationError"){
+                    throw new UserInputError(error.message, {invalidArgs: error.errors});
+                }
+                rejects(error)
+            }
             else {
                 newUser.role = roleObject
                 resolve({user: newUser})
