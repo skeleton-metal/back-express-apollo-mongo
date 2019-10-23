@@ -61,7 +61,7 @@ export const createUser = async function ({username, password, name, email, phon
             if (error){
                 console.log(error.name)
                 if(error.name == "ValidationError"){
-                    throw new UserInputError(error.message, {invalidArgs: error.errors});
+                    rejects(new UserInputError(error.message, {invalidArgs: error.errors}));
                 }
                 rejects(error)
             }
