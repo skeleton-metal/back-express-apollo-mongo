@@ -36,6 +36,7 @@
     "merge-graphql-schemas": "^1.7.0",
     "mongoose": "^5.7.3",
     "nodemailer": "^6.3.1",
+    "nodemailer-pug-engine": "^1.0.1",
     "nodemon": "^1.19.3"
   },
   "devDependencies": {

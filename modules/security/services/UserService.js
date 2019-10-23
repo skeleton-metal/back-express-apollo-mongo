@@ -4,6 +4,7 @@ import UserEmailManager from './UserEmailManager'
 import {findRoleByName, findRole} from "./RoleService";
 import {Role} from "../models/Role";
 import {UserInputError} from 'apollo-server-express'
+
 const jsonwebtoken = require('jsonwebtoken')
 
 export const auth = function ({username, password}) {
@@ -58,14 +59,13 @@ export const createUser = async function ({username, password, name, email, phon
 
     return new Promise((resolve, rejects) => {
         newUser.save((error => {
-            if (error){
+            if (error) {
                 console.log(error.name)
-                if(error.name == "ValidationError"){
+                if (error.name == "ValidationError") {
                     rejects(new UserInputError(error.message, {invalidArgs: error.errors}));
                 }
                 rejects(error)
-            }
-            else {
+            } else {
                 newUser.role = roleObject
                 resolve({user: newUser})
 
@@ -205,7 +205,20 @@ export const recoveryPassword = function (email) {
     return new Promise((resolve, rejects) => {
         User.findOne({email: email}).then((response) => {
             if (response) {
-                UserEmailManager.recovery(email)
+                let token = jsonwebtoken.sign(
+                    {
+                        id: response.id,
+                        username: response.username,
+                        email: response.email,
+                        phone: response.phone,
+                        avatarurl: response.avatarurl
+                    },
+                    process.env.JWT_SECRET,
+                    {expiresIn: '1d'}
+                )
+                let url = process.env.APP_WEB_URL + "/reset-password/" + token
+
+                UserEmailManager.recovery(email, url)
                 resolve({status: true, message: "Se envio un mail para recuperar tu contraseña"})
             } else rejects({status: false, message: "No se encontro el usuario"})
         }).catch((error) => {

@@ -16,14 +16,14 @@ class UserEmailManager {
         });
     }
 
-    recovery(to) {
+    recovery(to, url) {
         this.sendmail(
             {
                 from: process.env.SMTP_USER,
                 to: to,
                 subject: process.env.APP_NAME + " - Recuperacion de contraseña ",
-                text: "Su nueva contraseña es:  ",
-                html: "<p>Su nueva contraseña es:  </p>"
+                text: "Url para cambiar contraseña: " + url,
+                html: "<p>Url para cambiar contraseña:  </p> <a href='" + url + "' > " + url + " </a>"
             }
         ).then(result => {
             console.log(result)
