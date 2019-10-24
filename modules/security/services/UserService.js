@@ -215,7 +215,7 @@ export const recoveryPassword = function (email) {
                 )
                 let url = process.env.APP_WEB_URL + "/reset-password/" + token
 
-                UserEmailManager.recovery(email, url)
+                UserEmailManager.recovery(email, url, response)
                 resolve({status: true, message: "Se envio un mail para recuperar tu contraseña"})
             } else rejects({status: false, message: "No se encontro el usuario"})
         }).catch((error) => {

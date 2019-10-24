@@ -1,6 +1,8 @@
 require('dotenv').config();
 import nodemailer from "nodemailer"
 
+const Email = require('email-templates');
+
 class UserEmailManager {
 
     constructor() {
@@ -16,19 +18,29 @@ class UserEmailManager {
         });
     }
 
-    recovery(to, url) {
-        this.sendmail(
-            {
-                from: process.env.SMTP_USER,
+    recovery(to, url, user) {
+        var email = new Email({
+            transport: this.transporter,
+            send: true,
+            preview: false,
+        });
+
+        email.send({
+            template: 'recovery',
+            message: {
+                from: process.env.APP_NAME + "<" + process.env.SMTP_USER + ">",
                 to: to,
-                subject: process.env.APP_NAME + " - Recuperacion de contraseña ",
-                text: "Url para cambiar contraseña: " + url,
-                html: "<p>Url para cambiar contraseña:  </p> <a href='" + url + "' > " + url + " </a>"
-            }
-        ).then(result => {
-            console.log(result)
-        }).catch((err) => {
-            console.log(err)
+            },
+            locals: {
+                appName: process.env.APP_NAME,
+                name: user.name,
+                url,
+                username: user.username
+            },
+        }).then((response) => {
+            console.log(response)
+        }).catch((error) => {
+            console.log(error)
         })
     }
 
