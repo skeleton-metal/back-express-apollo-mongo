@@ -208,10 +208,7 @@ export const recoveryPassword = function (email) {
                 let token = jsonwebtoken.sign(
                     {
                         id: response.id,
-                        username: response.username,
-                        email: response.email,
-                        phone: response.phone,
-                        avatarurl: response.avatarurl
+                        username: response.username
                     },
                     process.env.JWT_SECRET,
                     {expiresIn: '1d'}
