@@ -7,7 +7,8 @@ import {
     auth,
     changePassword,
     registerUser,
-    recoveryPassword
+    recoveryPassword,
+    avatarUpload
 } from '../../services/UserService'
 
 export default {
@@ -43,7 +44,10 @@ export default {
         },
         recoveryPassword: (_, {email}) => {
             return recoveryPassword(email)
-        }
+        },
+        avatarUpload: (_, {file}, {user}) => {
+            return avatarUpload(user, file)
+        },
     }
 
 }

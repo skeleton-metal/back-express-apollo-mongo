@@ -31,4 +31,7 @@ const apolloServer = new ApolloServer({
 
 apolloServer.applyMiddleware({app})
 
+//STATIC IMG
+app.use('/media/avatar',express.static( __dirname + '/media/avatar'));
+
 app.listen(5000, () => console.log(`Server started :). URL: http://localhost:5000${apolloServer.graphqlPath}`))

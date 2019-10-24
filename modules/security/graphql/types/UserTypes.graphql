@@ -69,6 +69,13 @@ type Query {
     me: User
 }
 
+type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+    url: String!
+}
+
 type Mutation {
     auth(username: String!, password:String!): Token
     createUser(input: UserInput): SaveUserResponse
@@ -80,5 +87,5 @@ type Mutation {
     recoveryPassword(email:String!):RecoverPasswordResponse!
     changePassword( password:String!, passwordVerify:String!): ChangePasswordResponse!
 
-    #avatarUpload(file: Upload!): File!
+    avatarUpload(file: Upload!): File!
 }

@@ -2,10 +2,10 @@ import {User} from './../models/User'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
 import {findRoleByName, findRole} from "./RoleService";
-import {Role} from "../models/Role";
 import {UserInputError} from 'apollo-server-express'
-
-const jsonwebtoken = require('jsonwebtoken')
+import path from 'path'
+import fs from 'fs'
+import jsonwebtoken from 'jsonwebtoken'
 
 export const auth = function ({username, password}) {
     return new Promise((resolve, reject) => {
@@ -184,7 +184,7 @@ export const changePassword = function (id, {password, passwordVerify}) {
         return new Promise((resolve, rejects) => {
             User.findOneAndUpdate(
                 {_id: id}, {password: hash}, {new: true},
-                (error, user) => {
+                (error) => {
                     if (error) rejects({status: false, message: "Falla al intentar modificar password"})
                     else resolve({status: true, message: "Password modificada con exito"})
                 }
@@ -222,4 +222,48 @@ export const recoveryPassword = function (email) {
             if (error) rejects({status: false, message: "Fallo interno del servidor "})
         })
     })
+}
+
+
+export const avatarUpload = async function (user, file){
+    //console.log(user)
+    console.log(file)
+    //@TODO validate image size, extension
+    const {filename, mimetype, encoding, createReadStream} = await file;
+
+
+    const parseFileName = path.parse(filename);
+    const finalFileName = user.username + parseFileName.ext
+
+    const rs = createReadStream()
+    const dst = path.join("media", "avatar", finalFileName)
+    var wstream = fs.createWriteStream(dst);
+    rs.pipe(wstream);
+
+    const rand = randomstring(3)
+    const url = process.env.APP_API_URL + "/media/avatar/" + finalFileName + "?" + rand
+
+
+    return new Promise((resolve, rejects) => {
+        User.findOneAndUpdate(
+            {_id: user.id}, {avatar: finalFileName, avatarurl: url}, {useFindAndModify: false},
+            (error) => {
+                if (error) rejects({status: false, message: "Falla al intentar guardar el avatar en la DB"})
+                else resolve( {filename, mimetype, encoding, url})
+            }
+        );
+    })
+
+
+    return {filename, mimetype, encoding, url};
+}
+
+function randomstring(length) {
+    let result           = '';
+    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
