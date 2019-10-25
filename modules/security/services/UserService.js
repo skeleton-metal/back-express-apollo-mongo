@@ -84,7 +84,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
 
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
-            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {new: true},
+            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {new: true, runValidators: true},
             (error, user) => {
                 if (error) rejects(error)
                 else {

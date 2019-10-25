@@ -10,7 +10,8 @@ const UserSchema = new mongoose.Schema({
         dropDups: true,
         validate: {
             validator: function(value){
-                return true
+                let r= /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+                return r.test(value);
             },
             message: "El email no tiene un formato valido"
         }
