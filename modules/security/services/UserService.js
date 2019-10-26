@@ -21,6 +21,7 @@ export const auth = function ({username, password}) {
                             username: user.username,
                             email: user.email,
                             phone: user.phone,
+                            role: {name: user.role.name},
                             avatarurl: user.avatarurl
                         },
                         process.env.JWT_SECRET,
@@ -60,9 +61,8 @@ export const createUser = async function ({username, password, name, email, phon
     return new Promise((resolve, rejects) => {
         newUser.save((error => {
             if (error) {
-                console.log(error.name)
                 if (error.name == "ValidationError") {
-                    rejects(new UserInputError(error.message, {invalidArgs: error.errors}));
+                    rejects(new UserInputError(error.message, {inputErrors: error.errors}));
                 }
                 rejects(error)
             } else {
@@ -84,10 +84,14 @@ export const updateUser = async function (id, {username, name, email, phone, rol
 
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
-            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {new: true, runValidators: true},
+            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {new: true, runValidators: true, context: 'query'},
             (error, user) => {
-                if (error) rejects(error)
-                else {
+                if (error) {
+                    if (error.name == "ValidationError") {
+                        rejects(new UserInputError(error.message, {inputErrors: error.errors}));
+                    }
+                    rejects(error)
+                } else {
                     user.role = roleObject
                     resolve({user: user})
                 }
@@ -136,6 +140,9 @@ export const registerUser = async function ({username, password, name, email, ph
 
         newUser.save((error => {
             if (error) {
+                if (error.name == "ValidationError") {
+                    rejects(new UserInputError(error.message, {inputErrors: error.errors}));
+                }
                 rejects(error)
             } else {
                 UserEmailManager.activation(newUser.email);
@@ -225,7 +232,7 @@ export const recoveryPassword = function (email) {
 }
 
 
-export const avatarUpload = async function (user, file){
+export const avatarUpload = async function (user, file) {
     //console.log(user)
     console.log(file)
     //@TODO validate image size, extension
@@ -249,7 +256,7 @@ export const avatarUpload = async function (user, file){
             {_id: user.id}, {avatar: finalFileName, avatarurl: url}, {useFindAndModify: false},
             (error) => {
                 if (error) rejects({status: false, message: "Falla al intentar guardar el avatar en la DB"})
-                else resolve( {filename, mimetype, encoding, url})
+                else resolve({filename, mimetype, encoding, url})
             }
         );
     })
@@ -259,10 +266,10 @@ export const avatarUpload = async function (user, file){
 }
 
 function randomstring(length) {
-    let result           = '';
-    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    for (var i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
