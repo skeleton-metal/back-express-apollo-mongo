@@ -1,4 +1,4 @@
-export const rolesConfigFile = [
+const rolesConfigFile = [
     {
         name: 'admin',
         permissions: ['write', 'read']
@@ -7,5 +7,12 @@ export const rolesConfigFile = [
         name: 'user',
         permissions: ['read']
     }
-];
+]
+)
+
+const roleConfigPromise = new Promise((resolve) => {
+    resolve(rolesConfigFile)
+});
+
+export default roleConfigPromise;
 

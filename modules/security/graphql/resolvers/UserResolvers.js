@@ -10,6 +10,7 @@ import {
     recoveryPassword,
     avatarUpload
 } from '../../services/UserService'
+import {ForbiddenError} from 'apollo-server-express'
 
 export default {
     Query: {
@@ -27,13 +28,16 @@ export default {
         auth: (_, {username, password}) => {
             return auth({username, password})
         },
-        createUser: (_, {input}) => {
+        createUser: (_, {input}, {user, rbac}) => {
+            if (!user || !rbac.isAllowed(user.id, "SECURITY-ADMIN-CREATE")) throw new ForbiddenError("Not Authorized")
             return createUser(input)
         },
-        updateUser: (_, {id, input}) => {
+        updateUser: (_, {id, input}, {user, rbac}) => {
+            if (!user || !rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
             return updateUser(id, input)
         },
-        deleteUser: (_, {id}) => {
+        deleteUser: (_, {id}, {user, rbac}) => {
+            if (!user || !rbac.isAllowed(user.id, "SECURITY-ADMIN-DELETE")) throw new ForbiddenError("Not Authorized")
             return deleteUser(id)
         },
         changePassword: (_, {password, passwordVerify}, {user}) => {

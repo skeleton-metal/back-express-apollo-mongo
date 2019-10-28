@@ -4,7 +4,7 @@ class RBAC {
         this.debug = debug
         this.users = {}
         this.roles = {}
-        this.debug = (typeof rolesConfig.debug === 'undefined') ? true : rolesConfig.debug;
+        this.debug = debug;
 
         if (rolesConfig !== undefined) {
             this.roles = rolesConfig.reduce(
@@ -14,6 +14,7 @@ class RBAC {
                 },
                 {}
             );
+
         } else {
             throw new Error('You must provide a config array with roles and permissions')
         }
@@ -80,7 +81,7 @@ class RBAC {
     }
 
     isAllowed(userId, permission) {
-        if (typeof userId === 'undefined' || typeof permissionId === 'undefined') {
+        if (typeof userId === 'undefined' || typeof permission === 'undefined') {
             throw new Error('userId or permissionId is not defined, expected 2 arguments');
         }
 

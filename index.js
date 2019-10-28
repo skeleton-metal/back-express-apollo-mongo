@@ -4,7 +4,7 @@ import {ApolloServer} from 'apollo-server-express'
 import {resolvers,typeDefs} from './modules-merge'
 import {jwtAuth,handleAuthError} from './modules/security/middleware/authMiddleware'
 import corsMiddleware from "./modules/security/middleware/corsMiddleware";
-
+import rbacMiddleware from "./modules/security/middleware/rbacMiddleware";
 
 const app = express();
 
@@ -15,6 +15,8 @@ app.use(corsMiddleware)
 app.use(jwtAuth)
 app.use(handleAuthError)
 
+//RBAC Middleware
+app.use(rbacMiddleware)
 
 app.use((req,resp,next) => {
    // console.log(JSON.stringify(req.headers))
@@ -25,7 +27,7 @@ const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
     context: ({req}) => {
-        return {user: req.user}
+        return {user: req.user, rbac: req.rbac}
     },
 });
 
