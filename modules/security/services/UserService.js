@@ -210,19 +210,20 @@ export const changePassword = function (id, {password, passwordVerify}) {
 export const recoveryPassword = function (email) {
 
     return new Promise((resolve, rejects) => {
-        User.findOne({email: email}).then((response) => {
-            if (response) {
+        User.findOne({email: email}).populate('role').then((user) => {
+            if (user) {
                 let token = jsonwebtoken.sign(
                     {
-                        id: response.id,
-                        username: response.username
+                        id: user.id,
+                        username: user.username,
+                        role: {name: user.role.name}
                     },
                     process.env.JWT_SECRET,
                     {expiresIn: '1d'}
                 )
                 let url = process.env.APP_WEB_URL + "/reset-password/" + token
 
-                UserEmailManager.recovery(email, url, response)
+                UserEmailManager.recovery(email, url, user)
                 resolve({status: true, message: "Se envio un mail para recuperar tu contraseña"})
             } else rejects({status: false, message: "No se encontro el usuario"})
         }).catch((error) => {

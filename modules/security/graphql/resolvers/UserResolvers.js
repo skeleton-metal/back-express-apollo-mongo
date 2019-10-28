@@ -10,7 +10,7 @@ import {
     recoveryPassword,
     avatarUpload
 } from '../../services/UserService'
-import {ForbiddenError} from 'apollo-server-express'
+import {ForbiddenError, AuthenticationError} from 'apollo-server-express'
 
 export default {
     Query: {
@@ -41,6 +41,7 @@ export default {
             return deleteUser(id)
         },
         changePassword: (_, {password, passwordVerify}, {user}) => {
+            if(!user) throw new AuthenticationError("Usuario no autenticado")
             return changePassword(user.id, {password, passwordVerify})
         },
         registerUser: (_, {input}) => {
