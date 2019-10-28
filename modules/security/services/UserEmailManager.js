@@ -44,20 +44,30 @@ class UserEmailManager {
         })
     }
 
-    activation(to) {
+    activation(to, url, user) {
 
-        this.sendmail(
-            {
-                from: process.env.SMTP_USER,
+        var email = new Email({
+            transport: this.transporter,
+            send: true,
+            preview: false,
+        });
+
+        email.send({
+            template: 'activation',
+            message: {
+                from: process.env.APP_NAME + "<" + process.env.SMTP_USER + ">",
                 to: to,
-                subject: process.env.APP_NAME + " - Activación de Cuenta",
-                text: "Active su cuenta desde el link: ",
-                html: "<p>Active su cuenta desde el link: </p>"
-            }
-        ).then(result => {
-            console.log(result)
-        }).catch((err) => {
-            console.log(err)
+            },
+            locals: {
+                appName: process.env.APP_NAME,
+                name: user.name,
+                url,
+                username: user.username
+            },
+        }).then((response) => {
+            console.log(response)
+        }).catch((error) => {
+            console.log(error)
         })
     }
 

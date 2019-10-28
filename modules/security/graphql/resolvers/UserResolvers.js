@@ -8,7 +8,8 @@ import {
     changePassword,
     registerUser,
     recoveryPassword,
-    avatarUpload
+    avatarUpload,
+    activationUser
 } from '../../services/UserService'
 import {ForbiddenError, AuthenticationError} from 'apollo-server-express'
 
@@ -41,7 +42,7 @@ export default {
             return deleteUser(id)
         },
         changePassword: (_, {password, passwordVerify}, {user}) => {
-            if(!user) throw new AuthenticationError("Usuario no autenticado")
+            if (!user) throw new AuthenticationError("Usuario no autenticado")
             return changePassword(user.id, {password, passwordVerify})
         },
         registerUser: (_, {input}) => {
@@ -53,6 +54,9 @@ export default {
         avatarUpload: (_, {file}, {user}) => {
             return avatarUpload(user, file)
         },
+        activationUser: (_, {id}) => {
+            return activationUser(id)
+        }
     }
 
 }

@@ -22,6 +22,10 @@ type RecoverPasswordResponse{
     status: Boolean
     message: String
 }
+type ActivationUser{
+    status: Boolean
+    message: String
+}
 
 type ChangePasswordResponse{
     status: Boolean
@@ -86,6 +90,7 @@ type Mutation {
 
     recoveryPassword(email:String!):RecoverPasswordResponse!
     changePassword( password:String!, passwordVerify:String!): ChangePasswordResponse!
+    activationUser(id:ID!):ActivationUser!
 
     avatarUpload(file: Upload!): File!
 }

@@ -84,7 +84,11 @@ export const updateUser = async function (id, {username, name, email, phone, rol
 
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
-            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {new: true, runValidators: true, context: 'query'},
+            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {
+                new: true,
+                runValidators: true,
+                context: 'query'
+            },
             (error, user) => {
                 if (error) {
                     if (error.name == "ValidationError") {
@@ -145,16 +149,37 @@ export const registerUser = async function ({username, password, name, email, ph
                 }
                 rejects(error)
             } else {
-                UserEmailManager.activation(newUser.email);
+                let token = jsonwebtoken.sign(
+                    {
+                        id: newUser.id,
+                        username: newUser.username,
+                        role: {name: roleObject.name},
+                    },
+                    process.env.JWT_SECRET,
+                    {expiresIn: '1d'}
+                )
+                let url = process.env.APP_WEB_URL + "/activation-user/" + token
+                console.log(newUser)
+                UserEmailManager.activation(newUser.email, url, newUser);
                 resolve({status: true, id: newUser.id, email: newUser.email});
             }
         }))
 
     })
 
-
 }
 
+export const activationUser = function (id) {
+    return new Promise((resolve, rejects) => {
+        let active = true;
+        User.findOneAndUpdate({_id: id}, {active}, (error, user) => {
+            if (error) {
+                rejects({status: false, message: "Error al activar el usuario"})
+            } else
+                resolve({status: true, message: "Se activo correctamente la cuenta"})
+        })
+    })
+}
 
 export const findUsers = function () {
     return new Promise((resolve, reject) => {
