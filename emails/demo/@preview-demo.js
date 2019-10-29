@@ -18,9 +18,14 @@ email.send({
     },
     locals: {
         appName: process.env.APP_NAME,
-        name:  "NAME",
-        url: "URL",
-        username: "USERNAME"
+        name:  "Nombre Usuario",
+        url: "http://url_loca.com",
+        username: "USERNAME",
+        title: "Su Titulo",
+        description: "Su descripcion:",
+        btnText: "Texto del Boton",
+        signature: "Equipo de demo" ,
+        copyright: "Copyright @ " + process.env.APP_NAME + " " +new Date().getFullYear()
     }
 }).then(console.log)
     .catch(console.error);

@@ -18,9 +18,14 @@ email.send({
     },
     locals: {
         appName: process.env.APP_NAME,
-        name:  "NAME",
-        url: "URL",
-        username: "USERNAME"
+        name:  "Jhon Doe",
+        url:  "http://url_loca.com",
+        username: "USERNAME",
+        title: "Activación de cuenta",
+        description: "Hemos recibido tu solicitud de registro, para terminar de activar tu cuenta, accede al siguiente link:",
+        btnText: "Activar cuenta",
+        signature: "Equipo de activaciones" ,
+        copyright: "Copyright @ " + process.env.APP_NAME + " " +new Date().getFullYear()
     }
 }).then(console.log)
     .catch(console.error);

@@ -35,7 +35,11 @@ class UserEmailManager {
                 appName: process.env.APP_NAME,
                 name: user.name,
                 url,
-                username: user.username
+                username: user.username,
+                title: "Recuperacion de Contraseña",
+                description: "Hemos recibido tu solicitud para recuperar tu contraseña, podras hacerlo desde el siguiente link:",
+                btnText: "Recuperar Contraseña",
+                copyright: "Copyright @ " + process.env.APP_NAME + " " +new Date().getFullYear()
             },
         }).then((response) => {
             console.log(response)
@@ -62,7 +66,11 @@ class UserEmailManager {
                 appName: process.env.APP_NAME,
                 name: user.name,
                 url,
-                username: user.username
+                username: user.username,
+                title: "Activación de cuenta",
+                description: "Hemos recibido tu solicitud de registro, para terminar de activar tu cuenta, accede al siguiente link:",
+                btnText: "Activar cuenta",
+                copyright: "Copyright @ " + process.env.APP_NAME + " " +new Date().getFullYear()
             },
         }).then((response) => {
             console.log(response)

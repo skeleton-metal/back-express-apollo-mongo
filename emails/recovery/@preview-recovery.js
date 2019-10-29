@@ -18,9 +18,13 @@ email.send({
     },
     locals: {
         appName: process.env.APP_NAME,
-        name:  "NAME",
-        url: "URL",
-        username: "USERNAME"
+        name:  "Jhon Doe",
+        url: "http://url_loca.com",
+        username: "USERNAME",
+        title: "Recuperacion de Contraseña",
+        description: "Hemos recibido tu solicitud para recuperar tu contraseña, podras hacerlo desde el siguiente link:",
+        btnText: "Recuperar Contraseña",
+        copyright: "Copyright @ " + process.env.APP_NAME + " " +new Date().getFullYear()
     }
 }).then(console.log)
     .catch(console.error);
