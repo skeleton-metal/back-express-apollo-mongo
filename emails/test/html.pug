@@ -8,18 +8,15 @@ html(xmlns='http://www.w3.org/1999/xhtml')
                 table(align='center', border='0', cellpadding='0', cellspacing='0', width='600', style='border: 1px solid #cccccc; border-collapse: collapse;')
                     tbody
                         tr
-                            +headerh1(`${appName}`)
+                            +headerh1('APP NAME')
                         tr
                             td(bgcolor='#ffffff', style='padding: 40px 30px 40px 30px;')
                                 +tablesec
-                                    +title('Recuperación de cuenta')
-                                    +description(`Hola ${name} `)
-                                    +description('Hemos recibido una solicitud para cambiar tu contraseña')
+                                    +title('Aca el titulo Loco')
+                                    +description('Ponemos aca toda la descripcion')
                                     tr
                                         td
-                                            a(href=`${url}`).button(type='button' class='btn btn-info btn-lg') Cambiar Contraseña
+                                            +tablesec
+                                                +column1('Texto loco')
+                                                +column2('Texto loco 2')
                         +footer
-
-
-
-
