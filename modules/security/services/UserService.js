@@ -259,8 +259,7 @@ export const recoveryPassword = function (email) {
 
 
 export const avatarUpload = async function (user, file) {
-    //console.log(user)
-    console.log(file)
+
     //@TODO validate image size, extension
     const {filename, mimetype, encoding, createReadStream} = await file;
 
