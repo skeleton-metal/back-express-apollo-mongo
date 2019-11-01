@@ -1,0 +1,10 @@
+version: "3"
+services:
+  app:
+    container_name: api_node
+    build: .
+    volumes:
+      - ./media:/appuser/app/media
+      - ./logs:/appuser/app/logs
+    ports:
+      - "5000:5000"

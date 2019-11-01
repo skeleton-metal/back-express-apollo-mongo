@@ -39,7 +39,7 @@
     "mongoose-unique-validator": "^2.0.3",
     "nodemailer": "^6.3.1",
     "nodemailer-pug-engine": "^1.0.1",
-    "nodemon": "^1.19.3",
+    "nodemon": "^1.19.4",
     "winston": "^3.2.1"
   },
   "devDependencies": {
