@@ -18,7 +18,13 @@ function createRequestLogger(transports) {
     })
 
     return function logRequest(req, res, next) {
-        requestLogger.info({req, res})
+        let info = {};
+        info.ip = fillSpace(sanatizeIp(req.headers['x-forwarded-for'] || req.connection.remoteAddress),15);
+        info.method = fillSpace(req.method, 7)
+        info.user =fillSpace( req.user ? req.user.username : 'anonymous', 15)
+        info.dst = req.hostname + (req.port || '') + (req.originalUrl || '')
+        info.operation = fillSpace(req.body ? req.body.operationName ? req.body.operationName : "-" : "-",15)
+        requestLogger.info(info)
         next()
     }
 }
@@ -31,22 +37,20 @@ function fillSpace(str, length) {
     return str
 }
 
-function sanatizeIp(ip){
-    return ip.replace("::ffff:","")
+function sanatizeIp(ip) {
+    return ip.replace("::ffff:", "")
 }
 
 function getRequestLogFormatter() {
-    const {combine, timestamp, printf, colorize} = winston.format;
+    const {combine, timestamp, printf} = winston.format;
 
 
     return combine(
         timestamp(),
         printf(info => {
-            const {req, res} = info.message;
-            let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-            ip = sanatizeIp(ip)
-            return `${info.timestamp} ${info.level} REQUEST ${fillSpace(req.method,7)} IP: ${ip} DST: ${req.hostname}${req.port || ''}${req.originalUrl} USER: ${req.user ? req.user.username : 'anonymous'} ${req.body ? req.body.operationName ? " OPERATION:" + req.body.operationName : "" : ""} `;
-        })
+            const {ip, method, user, dst, operation} = info.message;
+            return `${info.timestamp} ${info.level} REQUEST ${method} IP:${ip} USER:${user} OP:${operation} DST:${dst} `;
+        }),
     );
 }
 
