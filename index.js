@@ -1,6 +1,6 @@
 import express from 'express';
 import {} from './mongo-db'
-import {ApolloServer} from 'apollo-server-express'
+import {ApolloServer, GraphQLExtension} from 'apollo-server-express'
 import {resolvers, typeDefs} from './modules-merge'
 import {jwtAuth, handleAuthError} from './modules/security/middleware/authMiddleware'
 import corsMiddleware from "./modules/security/middleware/corsMiddleware";
@@ -23,7 +23,7 @@ app.use(handleAuthError)
 //RBAC Middleware
 app.use(rbacMiddleware)
 
-//EXPRESS LOGGER
+//EXPRESS REQUEST LOGGER
 app.use(expressRequestLogger)
 
 //PLAY
@@ -32,21 +32,33 @@ app.use(function(req,res,next){
     next()
 })
 
+GraphQLExtension.didEncounterErrors
+
 const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
     context: ({req}) => {
         return {user: req.user, rbac: req.rbac}
     },
-    formatError: (err) => {
-        graphqlErrorLogger.error(err)
-        return err;
-    },
-    formatResponse: (response) => {
-        graphqlResponseLogger.info(response);
-        return response;
-    },
+    plugins: [
+        {
+            requestDidStart(requestContext) {
+                return {
+                    didEncounterErrors(requestContext) {
+
+                        graphqlErrorLogger(requestContext)
+                    },
+                    willSendResponse(requestContext){
+                        console.log("willSendResponse")
+
+                    }
+                }
+            }
+        }
+    ]
 });
+
+
 
 apolloServer.applyMiddleware({app})
 
