@@ -5,13 +5,16 @@ import {resolvers, typeDefs} from './modules-merge'
 import {jwtAuth, handleAuthError} from './modules/security/middleware/authMiddleware'
 import corsMiddleware from "./modules/security/middleware/corsMiddleware";
 import rbacMiddleware from "./modules/security/middleware/rbacMiddleware";
-import {errorLogger, requestLogger, graphqlLogger, logger} from './logger'
+import {expressRequestLogger, graphqlErrorLogger, graphqlResponseLogger} from './logger'
 
 const app = express();
 
 
 //CORS Middleware
 app.use(corsMiddleware)
+
+//body parse json payload
+app.use(express.json());
 
 //AUTH Middleware
 app.use(jwtAuth)
@@ -20,10 +23,14 @@ app.use(handleAuthError)
 //RBAC Middleware
 app.use(rbacMiddleware)
 
-//Logger
-app.use(errorLogger)
-app.use(requestLogger)
+//EXPRESS LOGGER
+app.use(expressRequestLogger)
 
+//PLAY
+app.use(function(req,res,next){
+  //  console.log(req.body)
+    next()
+})
 
 const apolloServer = new ApolloServer({
     typeDefs,
@@ -32,11 +39,11 @@ const apolloServer = new ApolloServer({
         return {user: req.user, rbac: req.rbac}
     },
     formatError: (err) => {
-        logger.error(err)
+        graphqlErrorLogger.error(err)
         return err;
     },
     formatResponse: (response) => {
-        graphqlLogger.info(response);
+        graphqlResponseLogger.info(response);
         return response;
     },
 });
