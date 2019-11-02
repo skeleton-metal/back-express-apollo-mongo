@@ -5,6 +5,10 @@ const requestTransport = [
         filename: 'logs/express-request.log',
         level: 'info'
     }),
+    new winston.transports.File({
+        filename: 'logs/combined.log',
+        level: 'info'
+    }),
     new winston.transports.Console({
         handleExceptions: true
     })
@@ -18,13 +22,15 @@ function createRequestLogger(transports) {
     })
 
     return function logRequest(req, res, next) {
-        let info = {};
-        info.ip = fillSpace(sanatizeIp(req.headers['x-forwarded-for'] || req.connection.remoteAddress),15);
-        info.method = fillSpace(req.method, 7)
-        info.user =fillSpace( req.user ? req.user.username : 'anonymous', 15)
-        info.dst = req.hostname + (req.port || '') + (req.originalUrl || '')
-        info.operation = fillSpace(req.body ? req.body.operationName ? req.body.operationName : "-" : "-",15)
-        requestLogger.info(info)
+        if (process.env.LOG_EXPRESS_REQUEST == "ON") {
+            let info = {};
+            info.ip = fillSpace(sanatizeIp(req.headers['x-forwarded-for'] || req.connection.remoteAddress), 15);
+            info.method = fillSpace(req.method, 7)
+            info.user = fillSpace(req.user ? req.user.username : 'anonymous', 15)
+            info.dst = req.hostname + (req.port || '') + (req.originalUrl || '')
+            info.operation = fillSpace(req.body ? req.body.operationName ? req.body.operationName : "-" : "-", 15)
+            requestLogger.info(info)
+        }
         next()
     }
 }

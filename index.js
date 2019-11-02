@@ -45,12 +45,11 @@ const apolloServer = new ApolloServer({
             requestDidStart(requestContext) {
                 return {
                     didEncounterErrors(requestContext) {
-
                         graphqlErrorLogger(requestContext)
                     },
                     willSendResponse(requestContext){
                         console.log("willSendResponse")
-
+                        graphqlResponseLogger(requestContext)
                     }
                 }
             }

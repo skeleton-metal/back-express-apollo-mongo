@@ -1,3 +1,4 @@
+require('dotenv').config();
 import winston from "winston";
 
 
@@ -6,6 +7,10 @@ const graphqlErrorTransports = [
         filename: 'logs/graphql-error.log',
         level: 'error',
         handleExceptions: true
+    }),
+    new winston.transports.File({
+        filename: 'logs/combined.log',
+        level: 'error'
     }),
     new winston.transports.Console({
         handleExceptions: true
@@ -21,18 +26,18 @@ function createGraphqlErrorLogger(transports) {
     })
 
     return function logError(requestContext) {
-        let info = {};
-        info.user = requestContext.context.user.username || ""
-        info.operation = requestContext.operationName || ""
-        requestContext.errors.forEach(error => {
-            info.msg = error.message || ""
-            info.code = error.extensions.code || ""
-            graphqlErrorLogger.error(info)
-        })
-
+        if (process.env.LOG_GRAPHQL_ERRORS == "ON") {
+            let info = {};
+            info.user = requestContext.context.user.username || ""
+            info.operation = requestContext.operationName || ""
+            requestContext.errors.forEach(error => {
+                info.msg = error.message || ""
+                info.code = error.extensions.code || ""
+                graphqlErrorLogger.error(info)
+            })
+        }
     }
 
-    return graphqlErrorLogger
 }
 
 function getGraphqlErrorLogFormatter() {
@@ -42,7 +47,7 @@ function getGraphqlErrorLogFormatter() {
         timestamp(),
         printf(info => {
             const {user, operation, code, msg} = info.message;
-            return `${info.timestamp} ${info.level} USER:${user} OP:${operation} CODE: ${code}  MSG: ${msg} `
+            return `${info.timestamp} ${info.level} GQLERROR USER:${user} OP:${operation} CODE: ${code}  MSG: ${msg} `
         })
     );
 }

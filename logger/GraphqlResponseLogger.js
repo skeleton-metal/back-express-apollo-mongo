@@ -5,11 +5,18 @@ const graphqlResponseTransport = [
         filename: 'logs/graphql-response.log',
         level: 'info'
     }),
+    new winston.transports.File({
+        filename: 'logs/combined.log',
+        level: 'info'
+    }),
     new winston.transports.Console({
         handleExceptions: true
     })
 ]
 
+const unwrap = (s) => s.replace(
+    /\n/g, ''
+);
 
 function createGraphqResponselLogger(transports) {
     const graphqlResponseLogger = winston.createLogger({
@@ -17,7 +24,21 @@ function createGraphqResponselLogger(transports) {
         transports: transports
     })
 
-    return graphqlResponseLogger
+
+
+
+    return function logResponse(requestContext) {
+        if (process.env.LOG_GRAPHQL_RESPONSE == "ON") {
+            let info = {};
+            info.user = requestContext.context.user.username || ""
+            info.type = requestContext.operation.operation.toUpperCase() || ""
+            info.operation = requestContext.operationName || ""
+            info.query = unwrap(requestContext.request.query) || ""
+            info.variables = JSON.stringify(requestContext.request.variables) || ""
+            info.resp = JSON.stringify(requestContext.response.data) || ""
+            graphqlResponseLogger.info(info)
+        }
+    }
 }
 
 function getGraphqlResponseLogFormatter() {
@@ -26,8 +47,8 @@ function getGraphqlResponseLogFormatter() {
     return combine(
         timestamp(),
         printf(info => {
-            console.log(info)
-            return `${info.timestamp} ${info.level} op:??? `;
+            const {user, type, operation, query, variables, resp} = info.message;
+            return `${info.timestamp} ${info.level} GQLRESP ${type} OP:${operation} USER:${user} QRY: ${query} VAR: ${variables} RESP: ${resp} \n`
         })
     );
 }
