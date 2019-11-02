@@ -28,11 +28,12 @@ function createGraphqlErrorLogger(transports) {
     return function logError(requestContext) {
         if (process.env.LOG_GRAPHQL_ERRORS == "ON") {
             let info = {};
-            info.user = requestContext.context.user.username || ""
+            info.user = requestContext.context.user ? requestContext.context.user.username ? requestContext.context.user.username : "anonymous" : "anonymous"
             info.operation = requestContext.operationName || ""
             requestContext.errors.forEach(error => {
+                console.log(error)
                 info.msg = error.message || ""
-                info.code = error.extensions.code || ""
+                info.code = error.extensions ? error.extensions.code ? error.extensions.code : "" : ""
                 graphqlErrorLogger.error(info)
             })
         }

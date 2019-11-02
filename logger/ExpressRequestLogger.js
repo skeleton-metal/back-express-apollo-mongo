@@ -26,7 +26,7 @@ function createRequestLogger(transports) {
             let info = {};
             info.ip = fillSpace(sanatizeIp(req.headers['x-forwarded-for'] || req.connection.remoteAddress), 15);
             info.method = fillSpace(req.method, 7)
-            info.user = fillSpace(req.user ? req.user.username : 'anonymous', 15)
+            info.user = fillSpace(req.user ? req.user.username ? req.user.username : 'anonymous' : 'anonymous', 15)
             info.dst = req.hostname + (req.port || '') + (req.originalUrl || '')
             info.operation = fillSpace(req.body ? req.body.operationName ? req.body.operationName : "-" : "-", 15)
             requestLogger.info(info)

@@ -41,6 +41,10 @@ export default {
             if (!user || !rbac.isAllowed(user.id, "SECURITY-ADMIN-DELETE")) throw new ForbiddenError("Not Authorized")
             return deleteUser(id)
         },
+        adminChangePassword: (_, {id, password, passwordVerify}, {user,rbac}) => {
+            if (!user || !rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
+            return changePassword(id, {password, passwordVerify})
+        },
         changePassword: (_, {password, passwordVerify}, {user}) => {
             if (!user) throw new AuthenticationError("Usuario no autenticado")
             return changePassword(user.id, {password, passwordVerify})

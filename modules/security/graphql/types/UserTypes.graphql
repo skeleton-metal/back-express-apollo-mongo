@@ -85,6 +85,7 @@ type Mutation {
     createUser(input: UserInput): SaveUserResponse
     updateUser(id: ID!, input: UserInput): SaveUserResponse
     deleteUser(id: ID!): Boolean!
+    adminChangePassword(id: ID!, password:String!, passwordVerify:String!): ChangePasswordResponse!
 
     registerUser(input: RegisterInput): RegisterUserResponse
 
