@@ -26,11 +26,10 @@ function createGeneralLogger(transports) {
 }
 
 function getGeneralLogFormatter() {
-    const {combine, timestamp, colorize, printf} = winston.format;
+    const {combine, timestamp, printf} = winston.format;
 
     return combine(
         timestamp(),
-        colorize(),
         printf(info => `${info.timestamp} ${info.level} ${info.message} `)
     );
 }
