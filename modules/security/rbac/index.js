@@ -7,6 +7,7 @@ const rbac = function () {
         roleConfigPromise.then(roleConfig => {
             resolve(new RBAC(roleConfig))
         }).catch(error => {
+            console.error(error)
             return error
         })
 

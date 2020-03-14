@@ -12,6 +12,7 @@ export default async function (req, res, next) {
         req.rbac = rbac;
         next();
     } catch (error) {
+        console.error(error)
         next(error);
     }
 
