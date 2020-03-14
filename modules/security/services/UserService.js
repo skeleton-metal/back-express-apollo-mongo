@@ -6,14 +6,19 @@ import {UserInputError} from 'apollo-server-express'
 import path from 'path'
 import fs from 'fs'
 import jsonwebtoken from 'jsonwebtoken'
+import {createSession} from "./SessionService";
 
-export const auth = function ({username, password}) {
+export const auth = async function({username, password}, req) {
     return new Promise((resolve, reject) => {
         findUserByUsername(username).then(user => {
             if (!user) {
                 reject('No user with that username/email')
             }
             if (user) {
+
+                //Registrar session
+                const newSession = createSession(user,req)
+
                 if (bcryptjs.compareSync(password, user.password)) {
                     let token = jsonwebtoken.sign(
                         {
@@ -22,7 +27,8 @@ export const auth = function ({username, password}) {
                             email: user.email,
                             phone: user.phone,
                             role: {name: user.role.name},
-                            avatarurl: user.avatarurl
+                            avatarurl: user.avatarurl,
+                            idSession: newSession.id
                         },
                         process.env.JWT_SECRET,
                         {expiresIn: '1d'}

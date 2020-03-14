@@ -6,6 +6,7 @@ import {jwtAuth, handleAuthError} from './modules/security/middleware/authMiddle
 import corsMiddleware from "./modules/security/middleware/corsMiddleware";
 import rbacMiddleware from "./modules/security/middleware/rbacMiddleware";
 import {expressRequestLogger, graphqlErrorLogger, graphqlResponseLogger} from './logger'
+import sessionMiddleware from "./modules/security/middleware/sessionMiddleware";
 
 const app = express();
 
@@ -26,11 +27,8 @@ app.use(rbacMiddleware)
 //EXPRESS REQUEST LOGGER
 app.use(expressRequestLogger)
 
-//PLAY
-app.use(function(req,res,next){
-  //  console.log(req.body)
-    next()
-})
+app.use(sessionMiddleware)
+
 
 GraphQLExtension.didEncounterErrors
 
