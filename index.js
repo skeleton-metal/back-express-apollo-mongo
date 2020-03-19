@@ -1,3 +1,4 @@
+require('dotenv').config();
 import express from 'express';
 import {} from './mongo-db'
 import {ApolloServer, GraphQLExtension} from 'apollo-server-express'
@@ -62,4 +63,4 @@ apolloServer.applyMiddleware({app})
 //STATIC IMG
 app.use('/media/avatar', express.static(__dirname + '/media/avatar'));
 
-app.listen(5000, () => console.log(`Server started :). URL: http://localhost:5000${apolloServer.graphqlPath}`))
+app.listen(process.env.APP_PORT, () => console.log(`Server started :). URL: http://localhost:${process.env.APP_PORT}${apolloServer.graphqlPath}`))
