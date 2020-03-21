@@ -1,10 +1,19 @@
-version: "3"
+version: "3.5"
+
 services:
-  app:
-    container_name: api_node
+  skeleton-api:
+    container_name: skeleton-api
     build: .
     volumes:
-      - ./media:/appuser/app/media
-      - ./logs:/appuser/app/logs
+      - ./media:/app/media
+      - ./logs:/app/logs
+      - ./process.yml:/app/process.yml
     ports:
-      - "5000:5000"
+      - "8080:8080"
+    networks:
+      - local
+
+networks:
+  local:
+    name: local
+    driver: bridge

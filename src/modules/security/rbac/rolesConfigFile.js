@@ -1,14 +1,14 @@
 const rolesConfigFile = [
     {
         name: 'admin',
-        permissions: ['write', 'read']
+        permissions: ["SECURITY-ADMIN-CREATE", "SECURITY-ADMIN-UPDATE", "SECURITY-ADMIN-DELETE"]
     },
     {
         name: 'user',
-        permissions: ['read']
+        permissions: []
     }
 ]
-)
+
 
 const roleConfigPromise = new Promise((resolve) => {
     resolve(rolesConfigFile)

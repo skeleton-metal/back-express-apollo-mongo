@@ -1,4 +1,4 @@
-import {User} from './../models/User'
+import {User} from '../models/User'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
 import {findRoleByName, findRole} from "./RoleService";

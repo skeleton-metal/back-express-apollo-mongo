@@ -1,5 +1,5 @@
-const {createRole} = require('./../modules/security/services/RoleService')
-const {createUser} = require('./../modules/security/services/UserService')
+const {createRole} = require('../modules/security/services/RoleService')
+const {createUser} = require('../modules/security/services/UserService')
 
 
 export const initSecurity = function () {

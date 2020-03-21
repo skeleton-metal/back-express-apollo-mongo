@@ -1,0 +1,37 @@
+#PM2 Config
+apps:
+  - script: dist/index.js
+    name: "skeleton"
+    instances: 1
+    env:
+      NODE_ENV: development
+      MONGO_URI: mongodb://skeleton:123@mongo_mongo_1:27017/skeleton
+      JWT_SECRET: djghhhhuuwiwuewieuwieuriwu
+      APP_NAME: SKELETON
+      APP_PORT: 8080
+      APP_API_URL: http://localhost:8080
+      APP_WEB_URL: http://skeleton.int
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 465
+      SMTP_SECURE: true
+      SMTP_USER: ci.sys.virtual@gmail.com
+      SMTP_PASS:
+      LOG_EXPRESS_REQUEST: ON
+      LOG_GRAPHQL_ERRORS: ON
+      LOG_GRAPHQL_RESPONSE: OFF
+    env_production:
+      NODE_ENV: production
+      MONGO_URI: mongodb://skeleton:123@mongo_mongo_1:27017/skeleton
+      JWT_SECRET: djghhhhuuwiwuewieuwieuriwu
+      APP_NAME: SKELETON
+      APP_PORT: 8080
+      APP_API_URL: http://localhost:8080
+      APP_WEB_URL: http://localhost:80
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 465
+      SMTP_SECURE: true
+      SMTP_USER: ci.sys.virtual@gmail.com
+      SMTP_PASS:
+      LOG_EXPRESS_REQUEST: ON
+      LOG_GRAPHQL_ERRORS: ON
+      LOG_GRAPHQL_RESPONSE: OFF

@@ -30,7 +30,6 @@ See vars on .env file
 
 ## Init data
 Initialize Roles and One admin user.  
-_Working in progress..._
 
 ### Compiles and hot-reloads for development
 ```
