@@ -39,10 +39,6 @@ type File {
     url: String!
 }
 
-type SaveUserResponse{
-    user: User
-}
-
 type RegisterUserResponse{
     status: Boolean!,
     id: String!,
@@ -82,9 +78,12 @@ type File {
 
 type Mutation {
     auth(username: String!, password:String!): Token
-    createUser(input: UserInput): SaveUserResponse
-    updateUser(id: ID!, input: UserInput): SaveUserResponse
+
+    createUser(input: UserInput): User
+    updateUser(id: ID!, input: UserInput): User
+
     deleteUser(id: ID!): Boolean!
+
     adminChangePassword(id: ID!, password:String!, passwordVerify:String!): ChangePasswordResponse!
 
     registerUser(input: RegisterInput): RegisterUserResponse

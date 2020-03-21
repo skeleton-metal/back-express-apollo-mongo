@@ -1,14 +1,14 @@
 import {User} from '../models/User'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
-import {findRoleByName, findRole} from "./RoleService";
+import {findRoleByName} from "./RoleService";
 import {UserInputError} from 'apollo-server-express'
 import path from 'path'
 import fs from 'fs'
 import jsonwebtoken from 'jsonwebtoken'
 import {createSession} from "./SessionService";
 
-export const auth = async function({username, password}, req) {
+export const auth = async function ({username, password}, req) {
     return new Promise((resolve, reject) => {
         findUserByUsername(username).then(user => {
             if (!user) {
@@ -17,7 +17,7 @@ export const auth = async function({username, password}, req) {
             if (user) {
 
                 //Registrar session
-                const newSession = createSession(user,req)
+                const newSession = createSession(user, req)
 
                 if (bcryptjs.compareSync(password, user.password)) {
                     let token = jsonwebtoken.sign(
@@ -47,7 +47,6 @@ export const auth = async function({username, password}, req) {
 export const createUser = async function ({username, password, name, email, phone, role, active}) {
     let salt = bcryptjs.genSaltSync(10);
     let hashPassword = bcryptjs.hashSync(password, salt);
-    let roleObject = {}
 
     const newUser = new User({
         username,
@@ -55,38 +54,30 @@ export const createUser = async function ({username, password, name, email, phon
         password: hashPassword,
         name,
         phone,
-        role,
         active,
+        role,
         createdAt: Date.now()
 
     })
-    newUser.id = newUser._id;
-
-    roleObject = await findRole(role)
 
     return new Promise((resolve, rejects) => {
-        newUser.save((error => {
+        newUser.save((error, doc) => {
             if (error) {
                 if (error.name == "ValidationError") {
                     rejects(new UserInputError(error.message, {inputErrors: error.errors}));
                 }
                 rejects(error)
             } else {
-                newUser.role = roleObject
-                resolve({user: newUser})
-
+                doc.populate('role').execPopulate(() => (resolve( doc))
+                )
             }
-        }))
+        })
     })
 }
 
 
 export const updateUser = async function (id, {username, name, email, phone, role, active}) {
     let updatedAt = Date.now()
-    let roleObject = {}
-
-    roleObject = await findRole(role)
-
 
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
@@ -95,15 +86,14 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                 runValidators: true,
                 context: 'query'
             },
-            (error, user) => {
+            (error, doc) => {
                 if (error) {
                     if (error.name == "ValidationError") {
                         rejects(new UserInputError(error.message, {inputErrors: error.errors}));
                     }
                     rejects(error)
                 } else {
-                    user.role = roleObject
-                    resolve({user: user})
+                    doc.populate('role').execPopulate(() => resolve(doc) )
                 }
             }
         );
@@ -203,9 +193,9 @@ export const findUser = function (id) {
     })
 }
 
-export const findUserByUsername = function (id) {
+export const findUserByUsername = function (name) {
     return new Promise((resolve, reject) => {
-        User.findOne({username: id}).populate('role').exec((err, res) => (
+        User.findOne({username: name}).populate('role').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })

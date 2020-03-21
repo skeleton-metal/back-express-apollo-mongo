@@ -5,7 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "nodemon src/index.js --exec babel-node -e js",
-    "initdb": "babel-node src/init-db.js",
+    "initdb": "babel-node src/scripts/init-db.js",
+    "initSecurity": "babel-node src/modules/security/scripts/init-security.js",
+    "rootRecover": "babel-node src/modules/security/scripts/root-recover.js",
     "build": "./node_modules/.bin/babel src -d dist --copy-files"
   },
   "repository": {
@@ -38,6 +40,7 @@
     "jsonwebtoken": "^8.5.1",
     "merge-graphql-schemas": "^1.7.0",
     "mongoose": "^5.7.3",
+    "saslprep": "^1.0.3",
     "mongoose-unique-validator": "^2.0.3",
     "nodemailer": "^6.3.1",
     "nodemailer-pug-engine": "^1.0.1",

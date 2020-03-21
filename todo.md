@@ -1,2 +1,0 @@
-- Sacar de auth el usuario, enviar solo token
-- Agregar entidad grupo (util para muchos casos)
