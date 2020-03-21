@@ -1,14 +1,14 @@
 import {createRole, findRoleByName} from './RoleService'
 import {createUser, findUserByUsername} from './UserService'
-import {PERMISIONS, INIT_USER_ADMIN} from '../consts'
+import {ROLES, INIT_USER_ADMIN} from '../consts'
 
 function checkOrCreateRoleAdmin() {
 
     return new Promise((resolve, reject) => {
 
-        findRoleByName("admin").then(role => {
+        findRoleByName(ROLES.ADMIN.NAME).then(role => {
             if (!role) {
-                createRole({name: "admin", permissions: PERMISIONS.ADMIN}).then(newRole => {
+                createRole({name: ROLES.ADMIN.NAME, permissions: ROLES.ADMIN.PERMISSIONS}).then(newRole => {
                     console.log("Role admin created: ", newRole.id)
                     resolve(newRole)
                 })
@@ -22,11 +22,11 @@ function checkOrCreateRoleAdmin() {
 
 }
 
-function checkOrCreateRoleUser() {
-    findRoleByName("user").then(roleUser => {
+function checkOrCreateRoleOperator() {
+    findRoleByName(ROLES.OPERATOR.NAME).then(roleUser => {
         if (!roleUser) {
-            createRole({name: "user", permissions: PERMISIONS.USER})
-                .then(roleUserNew => console.log("Role user created: ", roleUserNew.id))
+            createRole({name: ROLES.OPERATOR.NAME, permissions: ROLES.OPERATOR.PERMISSIONS})
+                .then(roleUserNew => console.log("Role operator created: ", roleUserNew.id))
                 .catch(err => console.error(err))
         } else {
             console.log("Role user found: ", roleUser.id)
@@ -37,11 +37,11 @@ function checkOrCreateRoleUser() {
 export const initSecurity = function () {
 
     //User ROLE
-    checkOrCreateRoleUser();
+    checkOrCreateRoleOperator();
 
     //Admin ROLE
     checkOrCreateRoleAdmin().then(role => {
-        findUserByUsername("root").then(user => {
+        findUserByUsername(INIT_USER_ADMIN.username).then(user => {
             if (!user) {
                 createUser({...INIT_USER_ADMIN, role: role.id}).then(userNew => {
                     console.log("User root created: ", userNew.id)
