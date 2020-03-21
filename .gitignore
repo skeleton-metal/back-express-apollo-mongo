@@ -5,3 +5,4 @@ logs/*
 !logs/.gitkeep
 media
 dist
+process.yml

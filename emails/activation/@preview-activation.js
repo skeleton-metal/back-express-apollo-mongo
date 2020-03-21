@@ -1,6 +1,8 @@
 require('dotenv').config();
 const Email = require('email-templates');
 
+//Preview: node emails/activation/@preview-activation.js
+
 const email = new Email({
     message: {
         from: process.env.APP_NAME + "<" + process.env.SMTP_USER + ">",
