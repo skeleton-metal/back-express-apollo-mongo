@@ -33,7 +33,7 @@ export const auth = async function ({username, password}, req) {
                         process.env.JWT_SECRET,
                         {expiresIn: '1d'}
                     )
-                    return resolve({token: token, user: user})
+                    return resolve({token: token})
                 } else {
                     reject('Incorrect password')
                 }
