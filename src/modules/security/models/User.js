@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const softDelete = require('mongoose-softdelete')
-const MongoPaging = require('mongo-cursor-pagination');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 var uniqueValidator = require('mongoose-unique-validator');
 
@@ -47,6 +47,6 @@ UserSchema.set('toJSON', {getters: true});
 UserSchema.plugin(uniqueValidator, {message: '{VALUE} ya existe. {PATH} debe ser unico.'});
 
 UserSchema.plugin(softDelete);
-//UserSchema.plugin(MongoPaging);
+UserSchema.plugin(mongoosePaginate);
 
 export const User = mongoose.model('User', UserSchema);

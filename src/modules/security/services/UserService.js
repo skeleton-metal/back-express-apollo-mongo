@@ -68,7 +68,7 @@ export const createUser = async function ({username, password, name, email, phon
                 }
                 rejects(error)
             } else {
-                doc.populate('role').execPopulate(() => (resolve( doc))
+                doc.populate('role').execPopulate(() => (resolve(doc))
                 )
             }
         })
@@ -93,7 +93,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                     }
                     rejects(error)
                 } else {
-                    doc.populate('role').execPopulate(() => resolve(doc) )
+                    doc.populate('role').execPopulate(() => resolve(doc))
                 }
             }
         );
@@ -104,8 +104,10 @@ export const deleteUser = function (id) {
     return new Promise((resolve, rejects) => {
 
         findUser(id).then((doc) => {
-            doc.softdelete(function(err) {
-                if (err) { rejects(err); }
+            doc.softdelete(function (err) {
+                if (err) {
+                    rejects(err);
+                }
                 resolve({id: id, deleteSuccess: true});
             });
         })
@@ -183,6 +185,36 @@ export const findUsers = function () {
         User.find({}).isDeleted(false).populate('role').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
+    })
+}
+
+function qs(search) {
+    let qs = {}
+    if (search) {
+        qs = {
+            $or: [
+                {name: {$regex: search, $options: 'i'}},
+                {username: {$regex: search, $options: 'i'}},
+                {email: {$regex: search, $options: 'i'}},
+                {phone: {$regex: search, $options: 'i'}}
+            ]
+        }
+    }
+    return qs
+}
+
+export const paginateUsers = function (limit, pageNumber = 1, search = null) {
+
+
+    let query = {deleted: false, ...qs(search)}
+    let populate = ['role']
+    let params = {page: pageNumber, limit: limit, populate: populate}
+
+    return new Promise((resolve, reject) => {
+        User.paginate(query, params).then(result => {
+                resolve({users: result.docs, totalItems: result.totalDocs, page: result.page})
+            }
+        ).catch(err => reject(err))
     })
 }
 

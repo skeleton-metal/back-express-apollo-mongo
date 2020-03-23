@@ -9,7 +9,7 @@ import {
     registerUser,
     recoveryPassword,
     avatarUpload,
-    activationUser
+    activationUser, paginateUsers
 } from '../../services/UserService'
 import {ForbiddenError, AuthenticationError} from 'apollo-server-express'
 
@@ -23,7 +23,10 @@ export default {
         },
         me: (_, {}, {user}) => {
             return findUser(user.id)
-        }
+        },
+        paginateUsers: (_, {limit, pageNumber, search}) => {
+            return paginateUsers(limit, pageNumber, search)
+        },
     },
     Mutation: {
         auth: (_, {username, password}) => {

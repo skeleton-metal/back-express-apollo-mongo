@@ -62,10 +62,17 @@ input RegisterInput{
     phone: String
 }
 
+type UsersPaginated{
+    totalItems: Int!
+    page: Int!
+    users: [User!]
+}
+
 type Query {
     users: [User!]
     user(id: ID!): User
     me: User
+    paginateUsers(limit: Int!, pageNumber: Int, search: String): UsersPaginated
 }
 
 type File {
