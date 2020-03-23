@@ -102,13 +102,14 @@ export const updateUser = async function (id, {username, name, email, phone, rol
 
 export const deleteUser = function (id) {
     return new Promise((resolve, rejects) => {
-        User.remove(
-            {_id: id}, {},
-            (error, user) => {
-                if (error) rejects(error)
-                else resolve(true)
-            }
-        );
+
+        findUser(id).then((doc) => {
+            doc.softdelete(function(err) {
+                if (err) { rejects(err); }
+                resolve({id: id, deleteSuccess: true});
+            });
+        })
+
     })
 }
 
@@ -179,7 +180,7 @@ export const activationUser = function (id) {
 
 export const findUsers = function () {
     return new Promise((resolve, reject) => {
-        User.find({}).populate('role').exec((err, res) => (
+        User.find({}).isDeleted(false).populate('role').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })

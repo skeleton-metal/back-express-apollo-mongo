@@ -75,13 +75,18 @@ type File {
     url: String!
 }
 
+type UserDelete{
+    id: ID!
+    deleteSuccess: Boolean!
+}
+
 type Mutation {
     auth(username: String!, password:String!): Token
 
     createUser(input: UserInput): User
     updateUser(id: ID!, input: UserInput): User
 
-    deleteUser(id: ID!): Boolean!
+    deleteUser(id: ID!): UserDelete!
 
     adminChangePassword(id: ID!, password:String!, passwordVerify:String!): ChangePasswordResponse!
 

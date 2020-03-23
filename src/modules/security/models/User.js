@@ -1,4 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
+const softDelete = require('mongoose-softdelete')
+const MongoPaging = require('mongo-cursor-pagination');
 
 var uniqueValidator = require('mongoose-unique-validator');
 
@@ -37,13 +39,14 @@ const UserSchema = new mongoose.Schema({
     role: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role'
-    },
-    createdAt: {type: Date, required: true},
-    updatedAt: {type: Date, required: true, default: Date.now},
-});
+    }
+}, {timestamps: true});
 
 UserSchema.set('toJSON', {getters: true});
 
 UserSchema.plugin(uniqueValidator, {message: '{VALUE} ya existe. {PATH} debe ser unico.'});
+
+UserSchema.plugin(softDelete);
+//UserSchema.plugin(MongoPaging);
 
 export const User = mongoose.model('User', UserSchema);
