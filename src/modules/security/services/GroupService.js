@@ -1,4 +1,5 @@
 import Group from './../models/GroupModel'
+import {UserInputError} from 'apollo-server-express'
 
 export const fetchGroups = async function () {
     return new Promise((resolve, reject) => {
@@ -62,7 +63,15 @@ export const createGroup = async function (user, {name}) {
     doc.id = doc._id;
     return new Promise((resolve, rejects) => {
         doc.save((error => {
-            error ? rejects(error) : resolve(doc)
+        
+            if (error) {
+                if (error.name == "ValidationError") {
+                    rejects(new UserInputError(error.message, {inputErrors: error.errors}));
+                }
+                rejects(error)
+            }    
+        
+            resolve(doc)
         }))
     })
 }
@@ -71,9 +80,17 @@ export const updateGroup = async function (user, id, {name}) {
     return new Promise((resolve, rejects) => {
         Group.findOneAndUpdate({_id: id},
         {name}, 
-        {new: true},
+        {new: true, runValidators: true, context: 'query'},
         (error,doc) => {
-            error ? rejects(error) : resolve(doc)
+            console.log(error)
+            if (error) {
+                if (error.name == "ValidationError") {
+                    rejects(new UserInputError(error.message, {inputErrors: error.errors}));
+                }
+                rejects(error)
+            } 
+        
+            resolve(doc)
         })
     })
 }

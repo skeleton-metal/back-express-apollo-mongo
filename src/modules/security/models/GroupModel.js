@@ -6,7 +6,16 @@ const Schema = mongoose.Schema;
 
 const GroupSchema = new Schema({ 
 
- name: {type: String, required: true}
+ name: {
+  type: String,
+  required: true,
+  validate: {
+   validator: function (value) {
+    let r = /^[A-Za-z\s]+$/;
+    return r.test(value);
+   },
+   message: "Solo se admiten letras, sin espacios"
+  }}
 
 
 });
