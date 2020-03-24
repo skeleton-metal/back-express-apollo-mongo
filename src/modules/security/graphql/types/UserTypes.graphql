@@ -72,7 +72,7 @@ type Query {
     users: [User!]
     user(id: ID!): User
     me: User
-    paginateUsers(limit: Int!, pageNumber: Int, search: String): UsersPaginated
+    paginateUsers(limit: Int!, pageNumber: Int, search: String, orderBy: String, orderDesc: Boolean): UsersPaginated
 }
 
 type File {

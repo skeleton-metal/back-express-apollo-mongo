@@ -24,8 +24,8 @@ export default {
         me: (_, {}, {user}) => {
             return findUser(user.id)
         },
-        paginateUsers: (_, {limit, pageNumber, search}) => {
-            return paginateUsers(limit, pageNumber, search)
+        paginateUsers: (_, {limit, pageNumber, search, orderBy, orderDesc}) => {
+            return paginateUsers(limit, pageNumber, search, orderBy, orderDesc)
         },
     },
     Mutation: {

@@ -8,7 +8,7 @@ export const fetchGroups = async function () {
     })
 }
 
-export const paginateGroup = function (limit, pageNumber = 1, search = null) {
+export const paginateGroup = function (limit, pageNumber = 1, search = null, orderBy = null, orderDesc = false) {
 
     function qs(search) {
         let qs = {}
@@ -21,10 +21,20 @@ export const paginateGroup = function (limit, pageNumber = 1, search = null) {
         }
         return qs
     }
+    
+     function getSort(orderBy, orderDesc) {
+        if (orderBy) {
+            return (orderDesc ? '-' : '') + orderBy
+        } else {
+            return null
+        }
+    }
+
 
     let query = {deleted: false, ...qs(search)}
     let populate = null
-    let params = {page: pageNumber, limit: limit, populate}
+    let sort = getSort(orderBy, orderDesc)
+    let params = {page: pageNumber, limit: limit, populate, sort}
 
     return new Promise((resolve, reject) => {
         Group.paginate(query, params).then(result => {

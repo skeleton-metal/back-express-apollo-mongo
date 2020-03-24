@@ -11,8 +11,8 @@ export default {
             if (!user) throw new AuthenticationError("Unauthenticated")
             return findGroup(id)
         },
-        groupsPaginate: (_, {limit, pageNumber, search}) => {
-            return paginateGroup(limit, pageNumber, search)
+        groupsPaginate: (_, {limit, pageNumber, search, orderBy, orderDesc}) => {
+            return paginateGroup(limit, pageNumber, search, orderBy, orderDesc)
         },
         
     },

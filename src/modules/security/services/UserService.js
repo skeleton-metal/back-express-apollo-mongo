@@ -185,26 +185,39 @@ export const findUsers = function () {
     })
 }
 
-function qs(search) {
-    let qs = {}
-    if (search) {
-        qs = {
-            $or: [
-                {name: {$regex: search, $options: 'i'}},
-                {username: {$regex: search, $options: 'i'}},
-                {email: {$regex: search, $options: 'i'}},
-                {phone: {$regex: search, $options: 'i'}}
-            ]
+
+export const paginateUsers = function (limit, pageNumber = 1, search = null, orderBy = null, orderDesc = false) {
+
+    function getQuery(search) {
+        let qs = {}
+        if (search) {
+            qs = {
+                $or: [
+                    {name: {$regex: search, $options: 'i'}},
+                    {username: {$regex: search, $options: 'i'}},
+                    {email: {$regex: search, $options: 'i'}},
+                    {phone: {$regex: search, $options: 'i'}}
+                ]
+            }
+        }
+        return qs
+    }
+
+    function getSort(orderBy, orderDesc) {
+        if (orderBy) {
+            return (orderDesc ? '-' : '') + orderBy
+        } else {
+            return null
         }
     }
-    return qs
-}
 
-export const paginateUsers = function (limit, pageNumber = 1, search = null) {
-    let query = {deleted: false, ...qs(search)}
+
+    let query = {deleted: false, ...getQuery(search)}
     let populate = ['role']
-    let params = {page: pageNumber, limit: limit, populate: populate}
+    let sort = getSort(orderBy, orderDesc)
 
+    let params = {page: pageNumber, limit: limit, populate: populate, sort}
+    console.log(params)
     return new Promise((resolve, reject) => {
         User.paginate(query, params).then(result => {
                 resolve({users: result.docs, totalItems: result.totalDocs, page: result.page})

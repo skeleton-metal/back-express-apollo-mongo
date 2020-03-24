@@ -12,7 +12,7 @@ type GroupPaginated{
 
 type Query {
     groups: [Group]
-    groupsPaginate(limit: Int!, pageNumber: Int, search: String): GroupPaginated  
+    groupsPaginate(limit: Int!, pageNumber: Int, search: String, orderBy: String, orderDesc: Boolean): GroupPaginated  
     group(id:ID!): Group
     
     
