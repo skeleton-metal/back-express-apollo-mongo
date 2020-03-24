@@ -105,10 +105,7 @@ export const deleteUser = function (id) {
 
         findUser(id).then((doc) => {
             doc.softdelete(function (err) {
-                if (err) {
-                    rejects(err);
-                }
-                resolve({id: id, deleteSuccess: true});
+                err ? rejects(err) : resolve({id: id, deleteSuccess: true})
             });
         })
 
@@ -204,8 +201,6 @@ function qs(search) {
 }
 
 export const paginateUsers = function (limit, pageNumber = 1, search = null) {
-
-
     let query = {deleted: false, ...qs(search)}
     let populate = ['role']
     let params = {page: pageNumber, limit: limit, populate: populate}
