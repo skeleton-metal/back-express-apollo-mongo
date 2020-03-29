@@ -1,8 +1,0 @@
-type Message{
-    text: String
-}
-
-
-extend type Query{
-    message: Message!
-}

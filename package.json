@@ -8,6 +8,7 @@
     "initdb": "babel-node src/scripts/init-db.js",
     "initSecurity": "babel-node src/modules/security/scripts/init-security.js",
     "rootRecover": "babel-node src/modules/security/scripts/root-recover.js",
+    "initCustom": "babel-node src/modules/customization/scripts/init-customization.js",
     "build": "./node_modules/.bin/babel src -d dist --copy-files && ./node_modules/.bin/babel emails -d dist/emails --copy-files"
   },
   "repository": {

@@ -75,7 +75,7 @@ type Query {
     paginateUsers(limit: Int!, pageNumber: Int, search: String, orderBy: String, orderDesc: Boolean): UsersPaginated
 }
 
-type File {
+type AvatarFile {
     filename: String!
     mimetype: String!
     encoding: String!
@@ -103,5 +103,5 @@ type Mutation {
     changePassword( password:String!, passwordVerify:String!): ChangePasswordResponse!
     activationUser(id:ID!):ActivationUserResponse!
 
-    avatarUpload(file: Upload!): File!
+    avatarUpload(file: Upload!): AvatarFile!
 }

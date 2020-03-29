@@ -1,18 +1,19 @@
 
-import { createCustomization, updateCustomization, deleteCustomization,  findCustomization, fetchCustomizations, paginateCustomization} from '../../services/CustomizationService'
+import {
+    createCustomization,
+    updateCustomization,
+    findCustomization,
+    updateColors,
+    updateLang,
+    uploadLogo
+} from '../../services/CustomizationService'
 
 export default {
     Query: {
-        customizations: (_, {}, {user,rbac}) => {
-            if (!user) throw new AuthenticationError("Unauthenticated")
-            return fetchCustomizations()
-        },
+
         customization: (_, {id}, {user,rbac}) => {
             if (!user) throw new AuthenticationError("Unauthenticated")
             return findCustomization(id)
-        },
-        customizationsPaginate: (_, {limit, pageNumber, search, orderBy, orderDesc}) => {
-            return paginateCustomization(limit, pageNumber, search, orderBy, orderDesc)
         },
         
     },
@@ -27,11 +28,25 @@ export default {
             if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
             return updateCustomization(user, id, input)
         },
-         customizationDelete: (_, {id}, {user,rbac}) => {
+
+        colorsUpdate: (_, {input}, {user,rbac}) => {
             if (!user) throw new AuthenticationError("Unauthenticated")
-            if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-DELETE")) throw new ForbiddenError("Not Authorized")
-            return deleteCustomization(id)
+            if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
+            return updateColors(user, input)
         },
+
+        langUpdate: (_, {input}, {user,rbac}) => {
+            if (!user) throw new AuthenticationError("Unauthenticated")
+            if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
+            return updateLang(user, input)
+        },
+
+        logoUpload: (_, {input}, {user,rbac}) => {
+            if (!user) throw new AuthenticationError("Unauthenticated")
+            if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
+            return uploadLogo(user, input)
+        },
+
     }
 
 }

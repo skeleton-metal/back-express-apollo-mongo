@@ -10,7 +10,7 @@ const CustomizationSchema = new Schema({
  onPrimary: {type: String, required: true},
  secondary: {type: String, required: true},
  onSecondary: {type: String, required: true},
- logo: {type: String, required: true},
+ logo: {type: String, required: false},
  language: {type: String, required: true}
 
 

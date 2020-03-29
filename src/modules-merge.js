@@ -2,12 +2,12 @@ import {mergeTypes, mergeResolvers} from 'merge-graphql-schemas';
 
 //RESOLVERS
 import {securityResolvers} from './modules/security/graphql'
-import {exampleResolvers} from './modules/example/graphql'
+import {resolvers as customizationResolvers } from './modules/customization/graphql'
 
-export const resolvers = mergeResolvers([securityResolvers, exampleResolvers])
+export const resolvers = mergeResolvers([securityResolvers, customizationResolvers])
 
 //TYPEDEFS
 import {securityTypes} from './modules/security/graphql'
-import {exampleTypes} from './modules/example/graphql'
+import {types as customizationTypes} from './modules/customization/graphql'
 
-export const typeDefs = mergeTypes([securityTypes, exampleTypes])
+export const typeDefs = mergeTypes([securityTypes, customizationTypes])
