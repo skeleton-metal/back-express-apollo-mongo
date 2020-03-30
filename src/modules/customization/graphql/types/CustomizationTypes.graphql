@@ -1,10 +1,20 @@
 type Customization{
+    colors: Colors!
+    logo: Logo!
+    language: String!
+}
+
+type Colors{
     primary: String!
     onPrimary: String!
     secondary: String!
     onSecondary: String!
-    logo: String!
-    language: String!
+}
+
+type Logo{
+    mode: String!
+    filename: String
+    url: String
 }
 
 type Query {
@@ -27,12 +37,6 @@ input ColorInput{
     onSecondary: String!
 }
 
-type Colors{
-    primary: String!
-    onPrimary: String!
-    secondary: String!
-    onSecondary: String!
-}
 
 type LogoFile {
     filename: String!

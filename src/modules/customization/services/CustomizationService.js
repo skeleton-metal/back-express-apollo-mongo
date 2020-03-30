@@ -16,10 +16,11 @@ export const findCustomization = async function () {
 }
 
 
-export const createCustomization = async function (user, {primary, onPrimary, secondary, onSecondary, logo, language}) {
+export const createCustomization = async function (user, {
+    colors, logo, language}) {
 
     const doc = new Customization({
-        primary, onPrimary, secondary, onSecondary, logo, language
+        colors, logo, language
     })
     doc.id = doc._id;
     return new Promise((resolve, rejects) => {
@@ -58,9 +59,9 @@ export const updateCustomization = async function (user, id, {primary, onPrimary
 
 export const updateColors = async function (user, {primary, onPrimary, secondary, onSecondary}) {
     return new Promise((resolve, rejects) => {
-
+        let colors =  {primary, onPrimary, secondary, onSecondary}
         Customization.findOneAndUpdate({},
-            {primary, onPrimary, secondary, onSecondary},
+            {colors},
             {new: true, runValidators: true, context: 'query', useFindAndModify: false},
             (error, doc) => {
 
@@ -70,10 +71,7 @@ export const updateColors = async function (user, {primary, onPrimary, secondary
                     }
                     rejects(error)
                 }
-                console.log(error)
-                console.log(doc)
-
-                resolve(doc)
+                resolve(doc.colors)
             })
     })
 }
@@ -99,6 +97,17 @@ export const updateLang = async function (user, {language}) {
 
 
 export const uploadLogo = async function (user, file) {
+
+    function randomstring(length) {
+        let result = '';
+        let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
+
     const {filename, mimetype, encoding, createReadStream} = await file;
 
 
@@ -113,10 +122,13 @@ export const uploadLogo = async function (user, file) {
     const rand = randomstring(3)
     const url = process.env.APP_API_URL + "/media/logo/" + finalFileName + "?" + rand
 
-
+    let logo = {
+        filename,
+        url
+    }
     return new Promise((resolve, rejects) => {
         Customization.findOneAndUpdate(
-            {}, {logo: finalFileName, logourl: url}, {useFindAndModify: false},
+            {}, {$set: {'logo.filename': finalFileName, 'logo.url': url}}, {useFindAndModify: false},
             (error) => {
                 if (error) rejects({status: false, message: "Falla al intentar guardar el logo en la DB"})
                 else resolve({filename, mimetype, encoding, url})

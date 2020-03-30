@@ -62,5 +62,6 @@ apolloServer.applyMiddleware({app})
 
 //STATIC IMG
 app.use('/media/avatar', express.static('media/avatar'));
+app.use('/media/logo', express.static('media/logo'));
 
 app.listen(process.env.APP_PORT, () => console.log(`Server started :). URL: http://localhost:${process.env.APP_PORT}${apolloServer.graphqlPath}`))

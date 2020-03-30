@@ -41,10 +41,10 @@ export default {
             return updateLang(user, input)
         },
 
-        logoUpload: (_, {input}, {user,rbac}) => {
+        logoUpload: (_, {file}, {user,rbac}) => {
             if (!user) throw new AuthenticationError("Unauthenticated")
             if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
-            return uploadLogo(user, input)
+            return uploadLogo(user, file)
         },
 
     }
