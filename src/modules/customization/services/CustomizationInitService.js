@@ -15,6 +15,7 @@ export const initCustomization = function () {
                 },
                 logo: {
                     mode: 'Round',
+                    title: '',
                     filename: '',
                     url: ''
                 },

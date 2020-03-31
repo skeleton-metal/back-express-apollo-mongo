@@ -3,21 +3,23 @@ import {UserInputError} from 'apollo-server-express'
 import path from "path";
 import fs from "fs";
 import {User} from "../../security/models/User";
-const mongoose = require('mongoose');
 
+const mongoose = require('mongoose');
 
 
 export const findCustomization = async function () {
     return new Promise((resolve, reject) => {
-        Customization.findOne().exec((err, res) => (
-            err ? reject(err) : resolve(res)
-        ));
+        Customization.findOne().exec((err, res) => {
+                err ? reject(err) : resolve(res)
+            }
+        );
     })
 }
 
 
 export const createCustomization = async function (user, {
-    colors, logo, language}) {
+    colors, logo, language
+}) {
 
     const doc = new Customization({
         colors, logo, language
@@ -59,7 +61,7 @@ export const updateCustomization = async function (user, id, {primary, onPrimary
 
 export const updateColors = async function (user, {primary, onPrimary, secondary, onSecondary}) {
     return new Promise((resolve, rejects) => {
-        let colors =  {primary, onPrimary, secondary, onSecondary}
+        let colors = {primary, onPrimary, secondary, onSecondary}
         Customization.findOneAndUpdate({},
             {colors},
             {new: true, runValidators: true, context: 'query', useFindAndModify: false},
@@ -72,6 +74,24 @@ export const updateColors = async function (user, {primary, onPrimary, secondary
                     rejects(error)
                 }
                 resolve(doc.colors)
+            })
+    })
+}
+
+export const updateLogo = async function (user, {mode, title}) {
+    return new Promise((resolve, rejects) => {
+        Customization.findOneAndUpdate({},
+            {$set: {'logo.mode': mode, 'logo.title': title}},
+            {new: true, runValidators: true, context: 'query', useFindAndModify: false},
+            (error, doc) => {
+
+                if (error) {
+                    if (error.name == "ValidationError") {
+                        rejects(new UserInputError(error.message, {inputErrors: error.errors}));
+                    }
+                    rejects(error)
+                }
+                resolve(doc.logo)
             })
     })
 }

@@ -14,6 +14,7 @@ const colorsSchema = new mongoose.Schema({
 
 const logoSchema = new mongoose.Schema({
     mode: {type: String, required: true},
+    title: {type: String, required: false},
     filename: {type: String, required: false},
     url: {type: String, required: false}
 })

@@ -5,6 +5,7 @@ import {
     findCustomization,
     updateColors,
     updateLang,
+    updateLogo,
     uploadLogo
 } from '../../services/CustomizationService'
 
@@ -13,7 +14,7 @@ export default {
 
         customization: (_, {id}, {user,rbac}) => {
             if (!user) throw new AuthenticationError("Unauthenticated")
-            return findCustomization(id)
+            return findCustomization()
         },
         
     },
@@ -33,6 +34,12 @@ export default {
             if (!user) throw new AuthenticationError("Unauthenticated")
             if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
             return updateColors(user, input)
+        },
+
+        logoUpdate: (_, {input}, {user,rbac}) => {
+            if (!user) throw new AuthenticationError("Unauthenticated")
+            if(!rbac.isAllowed(user.id, "SECURITY-ADMIN-UPDATE")) throw new ForbiddenError("Not Authorized")
+            return updateLogo(user, input)
         },
 
         langUpdate: (_, {input}, {user,rbac}) => {

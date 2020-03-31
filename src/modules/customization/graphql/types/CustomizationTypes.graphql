@@ -13,8 +13,13 @@ type Colors{
 
 type Logo{
     mode: String!
+    title: String
     filename: String
     url: String
+}
+
+type Lang {
+    language: String!
 }
 
 type Query {
@@ -37,6 +42,11 @@ input ColorInput{
     onSecondary: String!
 }
 
+input LogoInput{
+    mode: String!
+    title: String
+}
+
 
 type LogoFile {
     filename: String!
@@ -49,15 +59,14 @@ input LangInput{
     language: String!
 }
 
-type Lang {
-    language: String!
-}
+
 
 type Mutation {
     customizationCreate(input: CustomizationInput): Customization
     customizationUpdate(id: ID!, input: CustomizationInput): Customization
 
     colorsUpdate(input: ColorInput): Colors
+    logoUpdate(input: LogoInput): Logo
     logoUpload(file: Upload!): LogoFile!
     langUpdate(input: LangInput): Lang
 
