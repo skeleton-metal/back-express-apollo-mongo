@@ -11,12 +11,9 @@ import {
 
 export default {
     Query: {
-
         customization: (_, {id}, {user,rbac}) => {
-            if (!user) throw new AuthenticationError("Unauthenticated")
             return findCustomization()
         },
-        
     },
     Mutation: {
         customizationCreate: (_, {input}, {user,rbac}) => {
