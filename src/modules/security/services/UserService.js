@@ -16,24 +16,27 @@ export const auth = async function ({username, password}, req) {
             }
             if (user) {
 
-                //Registrar session
-                const newSession = createSession(user, req)
 
                 if (bcryptjs.compareSync(password, user.password)) {
-                    let token = jsonwebtoken.sign(
-                        {
-                            id: user.id,
-                            username: user.username,
-                            email: user.email,
-                            phone: user.phone,
-                            role: {name: user.role.name},
-                            avatarurl: user.avatarurl,
-                            idSession: newSession.id
-                        },
-                        process.env.JWT_SECRET,
-                        {expiresIn: '1d'}
-                    )
-                    return resolve({token: token})
+                    //Registrar session
+                    createSession(user, req).then(newSession => {
+
+                        let token = jsonwebtoken.sign(
+                            {
+                                id: user.id,
+                                name: user.name,
+                                username: user.username,
+                                email: user.email,
+                                phone: user.phone,
+                                role: {name: user.role.name},
+                                avatarurl: user.avatarurl,
+                                idSession: newSession.id
+                            },
+                            process.env.JWT_SECRET,
+                            {expiresIn: '1d'}
+                        )
+                        resolve({token: token})
+                    })
                 } else {
                     reject('Incorrect password')
                 }

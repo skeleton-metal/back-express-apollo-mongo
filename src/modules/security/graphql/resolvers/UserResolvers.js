@@ -29,8 +29,8 @@ export default {
         },
     },
     Mutation: {
-        auth: (_, {username, password}) => {
-            return auth({username, password})
+        auth: (_, {username, password}, {req}) => {
+            return auth({username, password},req)
         },
         createUser: (_, {input}, {user, rbac}) => {
             if (!user || !rbac.isAllowed(user.id, "SECURITY-ADMIN-CREATE")) throw new ForbiddenError("Not Authorized")

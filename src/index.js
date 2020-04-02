@@ -37,7 +37,7 @@ const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
     context: ({req}) => {
-        return {user: req.user, rbac: req.rbac}
+        return {user: req.user, rbac: req.rbac, req}
     },
     plugins: [
         {
