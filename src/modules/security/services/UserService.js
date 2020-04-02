@@ -33,7 +33,7 @@ export const auth = async function ({username, password}, req) {
                                 idSession: newSession.id
                             },
                             process.env.JWT_SECRET,
-                            {expiresIn: '1d'}
+                            {expiresIn: process.env.JWT_LOGIN_EXPIRED_IN || '1d'}
                         )
                         resolve({token: token})
                     })
@@ -155,7 +155,7 @@ export const registerUser = async function ({username, password, name, email, ph
                         role: {name: roleObject.name},
                     },
                     process.env.JWT_SECRET,
-                    {expiresIn: '1d'}
+                    {expiresIn: process.env.JWT_REGISTER_EXPIRED_IN || '30d'}
                 )
                 let url = process.env.APP_WEB_URL + "/activation-user/" + token
                 console.log(newUser)
