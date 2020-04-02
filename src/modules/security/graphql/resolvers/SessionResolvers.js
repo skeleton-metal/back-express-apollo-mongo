@@ -5,7 +5,7 @@ export default {
     Query: {
         sessionsByUser: (_, {}, {user,rbac}) => {
             if (!user) throw new AuthenticationError("Unauthenticated")
-            return sessionsByUser(30)
+            return sessionsByUser(30, 'days')
         },
         
     },

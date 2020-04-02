@@ -1,6 +1,7 @@
 type Session {
     id: ID!
     user: User!
+    username: String
     ip: String
     since: String
     until: String
@@ -10,32 +11,17 @@ type Session {
     os: Os
 }
 
-type Os{
-    family: String
-    name: String
-    version: String
-    platform: String
-}
-
-
-type Geo{
-    country: String
-    region: String
-    city: String
-    timezone: String
-}
-
 type SessionsByUser{
-    average: Float
-    min: Float
-    max: Float
-    last: Float
-    sum: Float
-    count: Int
-    request: Int
+    durationAvg: Float
+    durationMin: Float
+    durationMax: Float
+    durationLast: Float
+    durationSum: Float
+    sessionCount: Int
+    requestSum: Int
+    requestAvg: Float
     username: String
 }
-
 
 type Query {
     sessionsByUser: [SessionsByUser!]

@@ -64,15 +64,28 @@ export const updateSession = async function (user) {
 }
 
 
-export const sessionsByUser = async function (days) {
+export const sessionsByUser = async function (time, unit = 'days') {
     return new Promise((resolve, reject) => {
         let now = moment()
-        let from = now.subtract(days, 'days')
+        let from = now.subtract(time, unit)
         console.log(from.toISOString())
         Sessions.aggregate(
             [
-                {$match: {since: {$gte: from.toDate() }}},
-                {$group: {_id: "$username", username: {$last: "$username"}, count: {$sum: 1}, min: {$min: "$duration"} , max: {$max: "$duration"}, average: {$avg: "$duration"}, sum: {$sum: "$duration"}, last: {$last: "$duration"}, request: {$sum: "$request"},}}
+                {$match: {since: {$gte: from.toDate()}}},
+                {
+                    $group: {
+                        _id: "$username",
+                        username: {$last: "$username"},
+                        sessionCount: {$sum: 1},
+                        durationMin: {$min: "$duration"},
+                        durationMax: {$max: "$duration"},
+                        durationAvg: {$avg: "$duration"},
+                        durationSum: {$sum: "$duration"},
+                        durationLast: {$last: "$duration"},
+                        requestSum: {$sum: "$request"},
+                        requestAvg: {$avg: "$request"},
+                    }
+                }
             ], function (err, result) {
                 console.log(result)
 

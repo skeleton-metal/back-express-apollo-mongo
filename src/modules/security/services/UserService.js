@@ -7,6 +7,7 @@ import path from 'path'
 import fs from 'fs'
 import jsonwebtoken from 'jsonwebtoken'
 import {createSession} from "./SessionService";
+import {createLoginFail} from "./LoginFailService";
 
 export const auth = async function ({username, password}, req) {
     return new Promise((resolve, reject) => {
@@ -38,6 +39,7 @@ export const auth = async function ({username, password}, req) {
                         resolve({token: token})
                     })
                 } else {
+                    createLoginFail(username,req)
                     reject('Incorrect password')
                 }
             }
