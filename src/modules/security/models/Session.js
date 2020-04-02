@@ -40,8 +40,10 @@ const SessionSchema = new mongoose.Schema({
         required: true,
         dropDups: true
     },
+    username: {type: String, unique: false, required: false, dropDups: true},
     since: {type: Date, required: true, default: Date.now},
     until: {type: Date, required: true, default: Date.now},
+    duration: {type: Number, required: false, default: 0},
     agent: {type: String, unique: false, required: true, dropDups: true},
     ip: {type: String, unique: false, required: true, dropDups: true},
     geo: geoSchema,

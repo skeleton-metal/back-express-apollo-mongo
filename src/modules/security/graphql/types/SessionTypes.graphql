@@ -1,0 +1,41 @@
+type Session {
+    id: ID!
+    user: User!
+    ip: String
+    since: String
+    until: String
+    agent: String
+    duration: Int
+    geo: Geo
+    os: Os
+}
+
+type Os{
+    family: String
+    name: String
+    version: String
+    platform: String
+}
+
+
+type Geo{
+    country: String
+    region: String
+    city: String
+    timezone: String
+}
+
+type SessionsByUser{
+    average: Float
+    min: Float
+    max: Float
+    last: Float
+    sum: Float
+    count: Int
+    username: String
+}
+
+
+type Query {
+    sessionsByUser: [SessionsByUser!]
+}
