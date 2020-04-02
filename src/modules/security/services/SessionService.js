@@ -58,6 +58,7 @@ export const updateSession = async function (user) {
         let now = moment()
         doc.until = now
         doc.duration = now.diff(doc.since, 'seconds')
+        doc.request++
         doc.save()
     })
 }
@@ -71,7 +72,7 @@ export const sessionsByUser = async function (days) {
         Sessions.aggregate(
             [
                 {$match: {since: {$gte: from.toDate() }}},
-                {$group: {_id: "$username", username: {$last: "$username"}, count: {$sum: 1}, min: {$min: "$duration"} , max: {$max: "$duration"}, average: {$avg: "$duration"}, sum: {$sum: "$duration"}, last: {$last: "$duration"}}}
+                {$group: {_id: "$username", username: {$last: "$username"}, count: {$sum: 1}, min: {$min: "$duration"} , max: {$max: "$duration"}, average: {$avg: "$duration"}, sum: {$sum: "$duration"}, last: {$last: "$duration"}, request: {$sum: "$request"},}}
             ], function (err, result) {
                 console.log(result)
 

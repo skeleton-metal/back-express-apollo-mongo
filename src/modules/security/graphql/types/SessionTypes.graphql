@@ -32,6 +32,7 @@ type SessionsByUser{
     last: Float
     sum: Float
     count: Int
+    request: Int
     username: String
 }
 
