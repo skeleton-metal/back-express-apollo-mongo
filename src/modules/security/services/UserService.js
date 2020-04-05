@@ -29,7 +29,7 @@ export const auth = async function ({username, password}, req) {
                                 username: user.username,
                                 email: user.email,
                                 phone: user.phone,
-                                role: {name: user.role.name},
+                                role: user.role,
                                 avatarurl: user.avatarurl,
                                 idSession: newSession.id
                             },
