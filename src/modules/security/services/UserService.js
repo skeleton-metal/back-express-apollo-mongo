@@ -75,7 +75,7 @@ export const createUser = async function ({username, password, name, email, phon
                 }
                 rejects(error)
             } else {
-                doc.populate('role').execPopulate(() => (resolve(doc))
+                doc.populate('role').populate('groups').execPopulate(() => (resolve(doc))
                 )
             }
         })
@@ -100,7 +100,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                     }
                     rejects(error)
                 } else {
-                    doc.populate('role').execPopulate(() => resolve(doc))
+                    doc.populate('role').populate('groups').execPopulate(() => resolve(doc))
                 }
             }
         );

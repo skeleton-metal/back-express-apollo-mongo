@@ -1,6 +1,14 @@
 import Group from './../models/GroupModel'
 import {UserInputError} from 'apollo-server-express'
 
+const addUserToGroup = function(groupId, user) {
+    return Group.findByIdAndUpdate(
+        groupId,
+        { $push: { users: user._id } },
+        { new: true, useFindAndModify: false }
+    );
+};
+
 export const fetchGroups = async function () {
     return new Promise((resolve, reject) => {
         Group.find({}).isDeleted(false).exec((err, res) => (

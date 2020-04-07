@@ -1,6 +1,6 @@
 
 type Group{
-id: ID!
+ id: ID!
  name: String!
 }
 
