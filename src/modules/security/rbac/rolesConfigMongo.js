@@ -1,5 +1,5 @@
-import {Role} from '../models/Role'
+import {RoleModel} from '../models/RoleModel'
 
-const roleConfigPromise = Role.find({});
+const roleConfigPromise = RoleModel.find({});
 
 export default roleConfigPromise

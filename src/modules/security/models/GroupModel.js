@@ -15,8 +15,12 @@ const GroupSchema = new Schema({
     return r.test(value);
    },
    message: "Solo se admiten letras, sin espacios"
-  }}
-
+  }},
+ users: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User',
+  required: false
+ }]
 
 });
 

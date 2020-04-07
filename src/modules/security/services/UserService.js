@@ -1,4 +1,4 @@
-import {User} from '../models/User'
+import {User} from '../models/UserModel'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
 import {findRoleByName} from "./RoleService";
@@ -30,6 +30,7 @@ export const auth = async function ({username, password}, req) {
                                 email: user.email,
                                 phone: user.phone,
                                 role: user.role,
+                                groups: user.groups,
                                 avatarurl: user.avatarurl,
                                 idSession: newSession.id
                             },
@@ -49,7 +50,7 @@ export const auth = async function ({username, password}, req) {
 
 }
 
-export const createUser = async function ({username, password, name, email, phone, role, active}) {
+export const createUser = async function ({username, password, name, email, phone, role, groups, active}) {
     let salt = bcryptjs.genSaltSync(10);
     let hashPassword = bcryptjs.hashSync(password, salt);
 
@@ -61,6 +62,7 @@ export const createUser = async function ({username, password, name, email, phon
         phone,
         active,
         role,
+        groups,
         createdAt: Date.now()
 
     })
@@ -81,12 +83,12 @@ export const createUser = async function ({username, password, name, email, phon
 }
 
 
-export const updateUser = async function (id, {username, name, email, phone, role, active}) {
+export const updateUser = async function (id, {username, name, email, phone, role, groups, active}) {
     let updatedAt = Date.now()
 
     return new Promise((resolve, rejects) => {
         User.findOneAndUpdate(
-            {_id: id}, {username, name, email, phone, role, active, updatedAt}, {
+            {_id: id}, {username, name, email, phone, role, groups, active, updatedAt}, {
                 new: true,
                 runValidators: true,
                 context: 'query'
@@ -184,7 +186,7 @@ export const activationUser = function (id) {
 
 export const findUsers = function () {
     return new Promise((resolve, reject) => {
-        User.find({}).isDeleted(false).populate('role').exec((err, res) => (
+        User.find({}).isDeleted(false).populate('role').populate('groups').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
@@ -218,7 +220,7 @@ export const paginateUsers = function (limit, pageNumber = 1, search = null, ord
 
 
     let query = {deleted: false, ...getQuery(search)}
-    let populate = ['role']
+    let populate = ['role','groups']
     let sort = getSort(orderBy, orderDesc)
 
     let params = {page: pageNumber, limit: limit, populate: populate, sort}
@@ -233,7 +235,7 @@ export const paginateUsers = function (limit, pageNumber = 1, search = null, ord
 
 export const findUser = function (id) {
     return new Promise((resolve, reject) => {
-        User.findOne({_id: id}).populate('role').exec((err, res) => (
+        User.findOne({_id: id}).populate('role').populate('groups').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
@@ -241,7 +243,7 @@ export const findUser = function (id) {
 
 export const findUserByUsername = function (name) {
     return new Promise((resolve, reject) => {
-        User.findOne({username: name}).populate('role').exec((err, res) => (
+        User.findOne({username: name}).populate('role').populate('groups').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })

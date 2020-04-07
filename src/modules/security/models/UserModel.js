@@ -39,7 +39,12 @@ const UserSchema = new mongoose.Schema({
     role: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role'
-    }
+    },
+    groups: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Group',
+        required: false,
+    }]
 }, {timestamps: true});
 
 UserSchema.set('toJSON', {getters: true});

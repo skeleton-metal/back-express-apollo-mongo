@@ -8,4 +8,4 @@ const RoleSchema = new mongoose.Schema({
 
 RoleSchema.set('toJSON', { getters: true });
 
-export const Role = mongoose.model('Role', RoleSchema);
+export const RoleModel = mongoose.model('RoleModel', RoleSchema);

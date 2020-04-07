@@ -1,8 +1,8 @@
-import {Role} from '../models/Role'
+import {RoleModel} from '../models/RoleModel'
 
 
 export const createRole = function ({name, permissions}) {
-    const newRole = new Role({
+    const newRole = new RoleModel({
         name,
         permissions
     })
@@ -16,7 +16,7 @@ export const createRole = function ({name, permissions}) {
 
 export const findRoles = function () {
     return new Promise((resolve, reject) => {
-        Role.find({}).exec((err, res) => (
+        RoleModel.find({}).exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
@@ -24,7 +24,7 @@ export const findRoles = function () {
 
 export const findRole = function (id) {
     return new Promise((resolve, reject) => {
-        Role.findOne({_id: id}).exec((err, res) => (
+        RoleModel.findOne({_id: id}).exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
@@ -32,7 +32,7 @@ export const findRole = function (id) {
 
 export const findRoleByName = function (roleName) {
     return new Promise((resolve, reject) => {
-        Role.findOne({name: roleName}).exec((err, res) => (
+        RoleModel.findOne({name: roleName}).exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })

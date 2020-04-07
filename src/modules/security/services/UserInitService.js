@@ -9,11 +9,11 @@ function checkOrCreateRoleAdmin() {
         findRoleByName(ROLES.ADMIN.NAME).then(role => {
             if (!role) {
                 createRole({name: ROLES.ADMIN.NAME, permissions: ROLES.ADMIN.PERMISSIONS}).then(newRole => {
-                    console.log("Role admin created: ", newRole.id)
+                    console.log("RoleModel admin created: ", newRole.id)
                     resolve(newRole)
                 })
             } else {
-                console.log("Role admin found: ", role.id)
+                console.log("RoleModel admin found: ", role.id)
                 resolve(role)
             }
         }).catch(err => reject(err))
@@ -26,10 +26,10 @@ function checkOrCreateRoleOperator() {
     findRoleByName(ROLES.OPERATOR.NAME).then(roleUser => {
         if (!roleUser) {
             createRole({name: ROLES.OPERATOR.NAME, permissions: ROLES.OPERATOR.PERMISSIONS})
-                .then(roleUserNew => console.log("Role operator created: ", roleUserNew.id))
+                .then(roleUserNew => console.log("RoleModel operator created: ", roleUserNew.id))
                 .catch(err => console.error(err))
         } else {
-            console.log("Role user found: ", roleUser.id)
+            console.log("RoleModel user found: ", roleUser.id)
         }
     })
 }
