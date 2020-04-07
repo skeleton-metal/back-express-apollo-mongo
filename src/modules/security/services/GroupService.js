@@ -63,10 +63,10 @@ export const findGroup = async function (id) {
 
 
 
-export const createGroup = async function (user, {name}) {
+export const createGroup = async function (user, {name, color}) {
     
     const doc = new Group({
-        name
+        name, color
     })
     doc.id = doc._id;
     return new Promise((resolve, rejects) => {
@@ -84,10 +84,10 @@ export const createGroup = async function (user, {name}) {
     })
 }
 
-export const updateGroup = async function (user, id, {name}) {
+export const updateGroup = async function (user, id, {name, color}) {
     return new Promise((resolve, rejects) => {
         Group.findOneAndUpdate({_id: id},
-        {name}, 
+        {name, color},
         {new: true, runValidators: true, context: 'query'},
         (error,doc) => {
             console.log(error)

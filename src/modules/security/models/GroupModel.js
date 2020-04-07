@@ -16,6 +16,16 @@ const GroupSchema = new Schema({
    },
    message: "Solo se admiten letras, sin espacios"
   }},
+ color: {
+  type: String,
+  required: false,
+  validate: {
+   validator: function (value) {
+    let r = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    return r.test(value);
+   },
+   message: "Hexcode invalid"
+  }},
  users: [{
   type: mongoose.Schema.Types.ObjectId,
   ref: 'User',
