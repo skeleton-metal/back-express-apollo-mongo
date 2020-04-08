@@ -5,6 +5,7 @@ import {
     sessionsByOs,
     sessionsByUser
 } from '../../services/SessionService'
+import {AuthenticationError} from "apollo-server-express";
 
 export default {
     Query: {

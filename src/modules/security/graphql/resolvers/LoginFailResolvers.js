@@ -1,5 +1,6 @@
 
 import { loginFailByUsername} from '../../services/LoginFailService'
+import {AuthenticationError} from "apollo-server-express";
 
 export default {
     Query: {

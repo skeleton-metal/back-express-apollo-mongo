@@ -17,9 +17,7 @@ export const findCustomization = async function () {
 }
 
 
-export const createCustomization = async function (user, {
-    colors, logo, language
-}) {
+export const createCustomization = async function (user, {colors, logo, language}) {
 
     const doc = new Customization({
         colors, logo, language

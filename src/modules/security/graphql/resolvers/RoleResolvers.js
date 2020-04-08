@@ -1,6 +1,6 @@
 import {createRole, findPermissions, findRole, findRoles} from '../../services/RoleService'
 import {SECURITY_ROLE_CREATE, SECURITY_ROLE_SHOW} from "../../permissions";
-import {ForbiddenError} from "apollo-server-express";
+import {AuthenticationError, ForbiddenError} from "apollo-server-express";
 
 export default {
     Query: {

@@ -3,7 +3,6 @@ import * as permissions from '../permissions'
 
 export const findPermissions = function () {
     return new Promise((resolve, reject) => {
-        console.log(Object.values(permissions))
         resolve({permissions: Object.values(permissions)})
     })
 }

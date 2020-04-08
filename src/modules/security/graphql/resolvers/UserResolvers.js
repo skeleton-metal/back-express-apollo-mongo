@@ -11,7 +11,7 @@ import {
     avatarUpload,
     activationUser, paginateUsers
 } from '../../services/UserService'
-import {ForbiddenError, AuthenticationError} from 'apollo-server-express'
+import {AuthenticationError, ForbiddenError} from "apollo-server-express";
 import {SECURITY_USER_CREATE, SECURITY_USER_DELETE, SECURITY_USER_EDIT, SECURITY_USER_SHOW} from "../../permissions";
 
 export default {
