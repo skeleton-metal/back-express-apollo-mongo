@@ -1,13 +1,16 @@
 import Group from './../models/GroupModel'
 import {UserInputError} from 'apollo-server-express'
+import {findUsersGroup, setUsersGroups} from "./UserService";
 
-const addUserToGroup = function(groupId, user) {
+
+const addUserToGroup = function (groupId, user) {
     return Group.findByIdAndUpdate(
         groupId,
-        { $push: { users: user._id } },
-        { new: true, useFindAndModify: false }
+        {$push: {users: user._id}},
+        {new: true, useFindAndModify: false}
     );
 };
+
 
 export const fetchGroups = async function () {
     return new Promise((resolve, reject) => {
@@ -30,8 +33,8 @@ export const paginateGroup = function (limit, pageNumber = 1, search = null, ord
         }
         return qs
     }
-    
-     function getSort(orderBy, orderDesc) {
+
+    function getSort(orderBy, orderDesc) {
         if (orderBy) {
             return (orderDesc ? '-' : '') + orderBy
         } else {
@@ -47,7 +50,11 @@ export const paginateGroup = function (limit, pageNumber = 1, search = null, ord
 
     return new Promise((resolve, reject) => {
         Group.paginate(query, params).then(result => {
-                resolve({items: result.docs, totalItems: result.totalDocs, page: result.page})
+                let docs = result.docs.map(async group => {
+                    group.users = await findUsersGroup(group)
+                    return group
+                })
+                resolve({items: docs, totalItems: result.totalDocs, page: result.page})
             }
         ).catch(err => reject(err))
     })
@@ -62,44 +69,44 @@ export const findGroup = async function (id) {
 }
 
 
+export const createGroup = async function (user, {name, color, users}) {
 
-export const createGroup = async function (user, {name, color}) {
-    
     const doc = new Group({
         name, color
     })
     doc.id = doc._id;
     return new Promise((resolve, rejects) => {
-        doc.save((error => {
-        
+        doc.save(async error => {
+
             if (error) {
                 if (error.name == "ValidationError") {
                     rejects(new UserInputError(error.message, {inputErrors: error.errors}));
                 }
                 rejects(error)
-            }    
-        
+            }
+            await setUsersGroups(doc, users)
+            doc.users = await findUsersGroup(doc)
             resolve(doc)
-        }))
+        })
     })
 }
 
-export const updateGroup = async function (user, id, {name, color}) {
+export const updateGroup = async function (user, id, {name, color, users = []}) {
     return new Promise((resolve, rejects) => {
         Group.findOneAndUpdate({_id: id},
-        {name, color},
-        {new: true, runValidators: true, context: 'query'},
-        (error,doc) => {
-            console.log(error)
-            if (error) {
-                if (error.name == "ValidationError") {
-                    rejects(new UserInputError(error.message, {inputErrors: error.errors}));
+            {name, color},
+            {new: true, runValidators: true, context: 'query'},
+            async (error, doc) => {
+                if (error) {
+                    if (error.name == "ValidationError") {
+                        rejects(new UserInputError(error.message, {inputErrors: error.errors}));
+                    }
+                    rejects(error)
                 }
-                rejects(error)
-            } 
-        
-            resolve(doc)
-        })
+                await setUsersGroups(doc, users)
+                doc.users = await findUsersGroup(doc)
+                resolve(doc)
+            })
     })
 }
 

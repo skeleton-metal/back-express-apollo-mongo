@@ -2,6 +2,7 @@ type Group{
     id: ID!
     color: String
     name: String!
+    users: [User]
 }
 
 type GroupPaginated{
@@ -14,13 +15,12 @@ type Query {
     groups: [Group]
     groupsPaginate(limit: Int!, pageNumber: Int, search: String, orderBy: String, orderDesc: Boolean): GroupPaginated
     group(id:ID!): Group
-
-
 }
 
 input GroupInput{
     name: String!
     color: String
+    users: [String]
 }
 
 type GroupDelete{

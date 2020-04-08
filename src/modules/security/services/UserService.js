@@ -40,7 +40,7 @@ export const auth = async function ({username, password}, req) {
                         resolve({token: token})
                     })
                 } else {
-                    createLoginFail(username,req)
+                    createLoginFail(username, req)
                     reject('Incorrect password')
                 }
             }
@@ -220,7 +220,7 @@ export const paginateUsers = function (limit, pageNumber = 1, search = null, ord
 
 
     let query = {deleted: false, ...getQuery(search)}
-    let populate = ['role','groups']
+    let populate = ['role', 'groups']
     let sort = getSort(orderBy, orderDesc)
 
     let params = {page: pageNumber, limit: limit, populate: populate, sort}
@@ -342,4 +342,69 @@ function randomstring(length) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+
+
+export const findUsersGroup = function (group) {
+    return new Promise((resolve, reject) => {
+        User.find({groups: group.id}).then(users => {
+            resolve(users)
+        }).catch(err => {
+            reject(err)
+        })
+    })
+}
+
+
+export const setUsersGroups = function (group, users) {
+
+    function getDeletePromises(oldUsers) {
+        return oldUsers.map((oldUser) => {
+            let index = users.indexOf(oldUser.id)
+            if (index !== -1) {
+                users.splice(index, 1)
+            } else {
+                console.log("Deleting user " + oldUser.username + ' for ' + group.id)
+                return User.findOneAndUpdate(
+                    {_id: oldUser.id},
+                    {$pullAll: {groups: [group.id]}},
+                    {new: true, runValidators: true, context: 'query'}
+                )
+            }
+        });
+    }
+
+    function getPushPromises() {
+        return users.map(user => {
+            console.log("Adding user " + user + ' for ' + group.id)
+            return User.findOneAndUpdate(
+                {_id: user},
+                {$push: {groups: group.id}},
+                {new: true, runValidators: true, context: 'query'},
+            )
+        });
+    }
+
+    return new Promise(async (resolve, reject) => {
+
+        //0. Find actual users with this group
+        let oldUsers = await findUsersGroup(group)
+
+        //1. Delete group for old users that doesnt exist anymore
+        let deletePromises = getDeletePromises(oldUsers)
+
+        Promise.all(deletePromises).then(() => {
+            console.log("All Delete Promise Finish")
+            //2. Push group in new users
+            let pushPromises = getPushPromises()
+
+            Promise.all(pushPromises).then(() => {
+                console.log("All Push Promise Finish")
+                resolve(true)
+            }).catch(err => reject(err))
+
+        }).catch(err => reject(err))
+
+
+    })
 }
