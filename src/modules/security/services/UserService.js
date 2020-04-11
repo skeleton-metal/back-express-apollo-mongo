@@ -76,7 +76,7 @@ export const createUser = async function ({username, password, name, email, phon
                 }
                 rejects(error)
             } else {
-                createUserAudit(actionBy.id, doc._id, 'userCreated')
+                createUserAudit(actionBy?actionBy.id:null, doc._id, 'userCreated')
                 doc.populate('role').populate('groups').execPopulate(() => (resolve(doc))
                 )
             }
@@ -102,7 +102,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                     }
                     rejects(error)
                 } else {
-                    createUserAudit(actionBy.id, doc._id, 'userModified')
+                    createUserAudit(actionBy?actionBy.id:null, doc._id, 'userModified')
                     doc.populate('role').populate('groups').execPopulate(() => resolve(doc))
                 }
             }
@@ -115,7 +115,7 @@ export const deleteUser = function (id, actionBy = null) {
 
         findUser(id).then((doc) => {
             doc.softdelete(function (err) {
-                createUserAudit(actionBy.id, doc._id, 'userDeleted')
+                createUserAudit(actionBy?actionBy.id:null, doc._id, 'userDeleted')
                 err ? rejects(err) : resolve({id: id, deleteSuccess: true})
             });
         })

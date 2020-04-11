@@ -37,6 +37,15 @@ const GroupSchema = new Schema({
 GroupSchema.plugin(softDelete);
 GroupSchema.plugin(mongoosePaginate);
 
+GroupSchema.set('toJSON', {
+ transform : (doc, result) => {
+  return {
+   ...result,
+   id : result._id
+  };
+ }
+});
+
 const Group = mongoose.model('Group', GroupSchema);
 
 module.exports = Group;
