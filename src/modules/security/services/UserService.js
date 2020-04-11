@@ -1,4 +1,5 @@
 import {User} from '../models/UserModel'
+import {createUserAudit} from '../services/UserAuditService'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
 import {findRoleByName} from "./RoleService";
@@ -50,7 +51,7 @@ export const auth = async function ({username, password}, req) {
 
 }
 
-export const createUser = async function ({username, password, name, email, phone, role, groups, active}) {
+export const createUser = async function ({username, password, name, email, phone, role, groups, active}, actionBy = null) {
     let salt = bcryptjs.genSaltSync(10);
     let hashPassword = bcryptjs.hashSync(password, salt);
 
@@ -75,6 +76,7 @@ export const createUser = async function ({username, password, name, email, phon
                 }
                 rejects(error)
             } else {
+                createUserAudit(actionBy.id, doc._id, 'userCreated')
                 doc.populate('role').populate('groups').execPopulate(() => (resolve(doc))
                 )
             }
@@ -83,7 +85,7 @@ export const createUser = async function ({username, password, name, email, phon
 }
 
 
-export const updateUser = async function (id, {username, name, email, phone, role, groups, active}) {
+export const updateUser = async function (id, {username, name, email, phone, role, groups, active}, actionBy = null) {
     let updatedAt = Date.now()
 
     return new Promise((resolve, rejects) => {
@@ -100,6 +102,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                     }
                     rejects(error)
                 } else {
+                    createUserAudit(actionBy.id, doc._id, 'userModified')
                     doc.populate('role').populate('groups').execPopulate(() => resolve(doc))
                 }
             }
@@ -107,11 +110,12 @@ export const updateUser = async function (id, {username, name, email, phone, rol
     })
 }
 
-export const deleteUser = function (id) {
+export const deleteUser = function (id, actionBy = null) {
     return new Promise((resolve, rejects) => {
 
         findUser(id).then((doc) => {
             doc.softdelete(function (err) {
+                createUserAudit(actionBy.id, doc._id, 'userDeleted')
                 err ? rejects(err) : resolve({id: id, deleteSuccess: true})
             });
         })
@@ -121,7 +125,7 @@ export const deleteUser = function (id) {
 
 export const registerUser = async function ({username, password, name, email, phone}) {
 
-    const ROLE_NAME = "user";
+    const ROLE_NAME = "operator";
     let roleObject = await findRoleByName(ROLE_NAME)
 
     return new Promise((resolve, rejects) => {
@@ -162,7 +166,7 @@ export const registerUser = async function ({username, password, name, email, ph
                     {expiresIn: process.env.JWT_REGISTER_EXPIRED_IN || '30d'}
                 )
                 let url = process.env.APP_WEB_URL + "/activation-user/" + token
-                console.log(newUser)
+                createUserAudit(newUser.id, newUser.id, 'userRegistered')
                 UserEmailManager.activation(newUser.email, url, newUser);
                 resolve({status: true, id: newUser.id, email: newUser.email});
             }
@@ -178,8 +182,10 @@ export const activationUser = function (id) {
         User.findOneAndUpdate({_id: id}, {active}, (error, user) => {
             if (error) {
                 rejects({status: false, message: "Error al activar el usuario"})
-            } else
+            } else{
+                createUserAudit(user._id, user._id, 'userActivated')
                 resolve({status: true, message: "Se activo correctamente la cuenta"})
+            }
         })
     })
 }
@@ -250,7 +256,7 @@ export const findUserByUsername = function (name) {
 }
 
 
-export const changePassword = function (id, {password, passwordVerify}) {
+export const changePassword = function (id, {password, passwordVerify}, actionBy = null) {
 
     if (password == passwordVerify) {
 
@@ -260,9 +266,13 @@ export const changePassword = function (id, {password, passwordVerify}) {
         return new Promise((resolve, rejects) => {
             User.findOneAndUpdate(
                 {_id: id}, {password: hash}, {new: true},
-                (error) => {
-                    if (error) rejects({status: false, message: "Falla al intentar modificar password"})
-                    else resolve({status: true, message: "Password modificada con exito"})
+                (error, doc) => {
+                    if (error) {
+                        rejects({status: false, message: "Falla al intentar modificar password"})
+                    } else {
+                        createUserAudit(actionBy.id, id, 'passwordChange')
+                        resolve({status: true, message: "Password modificada con exito"})
+                    }
                 }
             );
         })
@@ -293,6 +303,7 @@ export const recoveryPassword = function (email) {
                 let url = process.env.APP_WEB_URL + "/reset-password/" + token
 
                 UserEmailManager.recovery(email, url, user)
+                createUserAudit(user.id, user.id, 'passwordRecovery')
                 resolve({status: true, message: "Se envio un mail para recuperar tu contraseña"})
             } else rejects({status: false, message: "No se encontro el usuario"})
         }).catch((error) => {
@@ -324,8 +335,12 @@ export const avatarUpload = async function (user, file) {
         User.findOneAndUpdate(
             {_id: user.id}, {avatar: finalFileName, avatarurl: url}, {useFindAndModify: false},
             (error) => {
-                if (error) rejects({status: false, message: "Falla al intentar guardar el avatar en la DB"})
-                else resolve({filename, mimetype, encoding, url})
+                if (error){
+                    rejects({status: false, message: "Falla al intentar guardar el avatar en la DB"})
+                }else{
+                    createUserAudit(user.id, user.id, 'avatarChange')
+                    resolve({filename, mimetype, encoding, url})
+                }
             }
         );
     })
@@ -364,7 +379,7 @@ export const setUsersGroups = function (group, users) {
             if (index !== -1) {
                 users.splice(index, 1)
             } else {
-                console.log("Deleting user " + oldUser.username + ' for ' + group.id)
+               // console.log("Deleting user " + oldUser.username + ' for ' + group.id)
                 return User.findOneAndUpdate(
                     {_id: oldUser.id},
                     {$pullAll: {groups: [group.id]}},
@@ -376,7 +391,7 @@ export const setUsersGroups = function (group, users) {
 
     function getPushPromises() {
         return users.map(user => {
-            console.log("Adding user " + user + ' for ' + group.id)
+            // console.log("Adding user " + user + ' for ' + group.id)
             return User.findOneAndUpdate(
                 {_id: user},
                 {$push: {groups: group.id}},

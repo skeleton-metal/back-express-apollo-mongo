@@ -16,7 +16,7 @@ import {SECURITY_USER_CREATE, SECURITY_USER_DELETE, SECURITY_USER_EDIT, SECURITY
 
 export default {
     Query: {
-        users: (_,{}, {user, rbac}) => {
+        users: (_, {}, {user, rbac}) => {
             if (!user || !rbac.isAllowed(user.id, SECURITY_USER_SHOW)) throw new ForbiddenError("Not Authorized")
             return findUsers()
         },
@@ -34,27 +34,27 @@ export default {
     },
     Mutation: {
         auth: (_, {username, password}, {req}) => {
-            return auth({username, password},req)
+            return auth({username, password}, req)
         },
         createUser: (_, {input}, {user, rbac}) => {
             if (!user || !rbac.isAllowed(user.id, SECURITY_USER_CREATE)) throw new ForbiddenError("Not Authorized")
-            return createUser(input)
+            return createUser(input, user)
         },
         updateUser: (_, {id, input}, {user, rbac}) => {
             if (!user || !rbac.isAllowed(user.id, SECURITY_USER_EDIT)) throw new ForbiddenError("Not Authorized")
-            return updateUser(id, input)
+            return updateUser(id, input, user)
         },
         deleteUser: (_, {id}, {user, rbac}) => {
             if (!user || !rbac.isAllowed(user.id, SECURITY_USER_DELETE)) throw new ForbiddenError("Not Authorized")
-            return deleteUser(id)
+            return deleteUser(id, user)
         },
-        adminChangePassword: (_, {id, password, passwordVerify}, {user,rbac}) => {
+        adminChangePassword: (_, {id, password, passwordVerify}, {user, rbac}) => {
             if (!user || !rbac.isAllowed(user.id, SECURITY_USER_EDIT)) throw new ForbiddenError("Not Authorized")
-            return changePassword(id, {password, passwordVerify})
+            return changePassword(id, {password, passwordVerify}, user)
         },
         changePassword: (_, {password, passwordVerify}, {user}) => {
             if (!user) throw new AuthenticationError("Usuario no autenticado")
-            return changePassword(user.id, {password, passwordVerify})
+            return changePassword(user.id, {password, passwordVerify}, user)
         },
         registerUser: (_, {input}) => {
             return registerUser(input)
