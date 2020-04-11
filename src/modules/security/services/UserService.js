@@ -270,7 +270,7 @@ export const changePassword = function (id, {password, passwordVerify}, actionBy
                     if (error) {
                         rejects({status: false, message: "Falla al intentar modificar password"})
                     } else {
-                        createUserAudit(actionBy.id, id, 'passwordChange')
+                        createUserAudit(actionBy.id, id, (actionBy.id === id)?'userPasswordChange':'adminPasswordChange')
                         resolve({status: true, message: "Password modificada con exito"})
                     }
                 }

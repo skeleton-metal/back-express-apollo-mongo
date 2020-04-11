@@ -11,7 +11,7 @@ function getFromDate(time, unit) {
 
 export const fetchUserAuditsFrom = async function (time = 7, unit = 'days') {
     return new Promise((resolve, reject) => {
-        UserAudit.find({date: {$gte: getFromDate(time, unit)}}).populate('actionBy').populate('actionFor').exec((err, res) => (
+        UserAudit.find({date: {$gte: getFromDate(time, unit)}}).sort({date: -1}).populate('actionBy').populate('actionFor').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
@@ -19,7 +19,7 @@ export const fetchUserAuditsFrom = async function (time = 7, unit = 'days') {
 
 export const fetchUserAuditsLimit = async function (limit = 10) {
     return new Promise((resolve, reject) => {
-        UserAudit.find({date: {$gte: getFromDate(time, unit)}}).populate('actionBy').populate('actionFor').limit(limit).exec((err, res) => (
+        UserAudit.find({}).sort({date: -1}).limit(limit).populate('actionBy').populate('actionFor').exec((err, res) => (
             err ? reject(err) : resolve(res)
         ));
     })
