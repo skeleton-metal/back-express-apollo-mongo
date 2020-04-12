@@ -1,4 +1,5 @@
 import {User} from '../models/UserModel'
+import '../models/GroupModel'
 import {createUserAudit} from '../services/UserAuditService'
 import bcryptjs from 'bcryptjs'
 import UserEmailManager from './UserEmailManager'
