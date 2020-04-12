@@ -1,15 +1,17 @@
 const {createCustomization, findCustomization} = require('./CustomizationService');
-const defaults = require('./../defaults')
+const {values} = require('./../defaults')
 
 export const initCustomization = function () {
 
     findCustomization().then(doc => {
-        console.log("doc: ", doc)
         if (!doc) {
-            createCustomization({}, defaults).then(docNew => {
-                console.log("docNew: ", docNew)
+            createCustomization({}, values
+            ).then(docNew => {
+                console.log("Customization created: ", docNew.id)
                 process.exit()
             })
+        }else{
+            console.log("Customization found: ", doc.id)
         }
     })
 

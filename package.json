@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "nodemon src/index.js --exec babel-node -e js",
-    "initdb": "babel-node src/scripts/init-db.js",
+    "initdb": "babel-node src/modules/security/scripts/init-security.js && babel-node src/modules/customization/scripts/init-customization.js",
     "initSecurity": "babel-node src/modules/security/scripts/init-security.js",
     "rootRecover": "babel-node src/modules/security/scripts/root-recover.js",
     "initCustom": "babel-node src/modules/customization/scripts/init-customization.js",

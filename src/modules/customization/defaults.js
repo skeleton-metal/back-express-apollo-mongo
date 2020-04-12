@@ -1,15 +1,15 @@
 require('dotenv')
 
-export default {
+module.exports.values = {
     colors: {
-        primary: '#3E8F8D',
+        primary: '#000000',
         onPrimary: '#FFFFFF',
-        secondary: '#397A5B',
+        secondary: '#000000',
         onSecondary: '#FFFFFF',
     },
     logo: {
         mode: 'Round',
-        title: 'Skeleton',
+        title: 'Skeleton Group',
         filename: 'logo.png',
         url: process.env.APP_API_URL + '/media/logo/logo.png'
     },
