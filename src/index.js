@@ -65,6 +65,6 @@ app.use('/media/avatar', express.static('media/avatar'));
 app.use('/media/logo', express.static('media/logo'));
 
 //status
-app.get('/status', function(req,res){res.send("APP RUNNING")})
+app.get('/status', function(req,res){res.send("RUNNING")})
 
 app.listen(process.env.APP_PORT, () => console.log(`Server started :). URL: http://localhost:${process.env.APP_PORT}${apolloServer.graphqlPath}`))
