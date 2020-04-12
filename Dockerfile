@@ -15,4 +15,4 @@ RUN npm run build
 
 EXPOSE 80 443 43554
 
-CMD ["pm2-runtime", "start", "--env", "production", "process.yml"]
+CMD ["pm2-runtime", "start", "process.yml"]
