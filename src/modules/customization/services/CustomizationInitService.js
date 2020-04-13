@@ -12,6 +12,7 @@ export const initCustomization = function () {
             })
         }else{
             console.log("Customization found: ", doc.id)
+            process.exit()
         }
     })
 
