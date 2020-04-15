@@ -1,4 +1,4 @@
-require('dotenv')
+require('dotenv').config()
 
 module.exports.values = {
     colors: {
