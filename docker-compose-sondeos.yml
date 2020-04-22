@@ -2,7 +2,7 @@ version: "3.5"
 
 services:
   api-scaffold:
-    image: api-scaffold:tagname
+    image: sndregistry.sondeosglobal.com/ciudadano/api-scaffold:tagname
     container_name: api-scaffold
     volumes:
       - ./media:/app/media
