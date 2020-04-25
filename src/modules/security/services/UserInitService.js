@@ -34,25 +34,24 @@ function checkOrCreateRoleOperator() {
     })
 }
 
-export const initSecurity = function () {
+export const initSecurity = async function () {
 
     //User ROLE
-    checkOrCreateRoleOperator();
+    await checkOrCreateRoleOperator();
 
     //Admin ROLE
-    checkOrCreateRoleAdmin().then(role => {
-        findUserByUsername(INIT_USER_ADMIN.username).then(user => {
-            if (!user) {
-                createUser({...INIT_USER_ADMIN, role: role.id}).then(userNew => {
-                    console.log("User root created: ", userNew.id)
-                    process.exit()
-                })
-            } else {
-                console.log("User root found: ", user.id)
-                process.exit()
-            }
-        }).catch(err => console.error(err))
+    let roleAdmin = await checkOrCreateRoleAdmin()
+    let user = await findUserByUsername(INIT_USER_ADMIN.username)
 
-    })
+    if (!user) {
+        user = await createUser({...INIT_USER_ADMIN, role: roleAdmin.id})
+        console.log("User root created: ", user.id)
+
+    } else {
+        console.log("User root found: ", user.id)
+    }
+
 
 }
+
+

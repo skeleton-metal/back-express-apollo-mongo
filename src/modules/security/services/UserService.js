@@ -61,7 +61,6 @@ export const auth = async function ({username, password}, req) {
 }
 
 
-
 export const createUser = async function ({username, password, name, email, phone, role, groups, active}, actionBy = null) {
 
 
@@ -86,7 +85,7 @@ export const createUser = async function ({username, password, name, email, phon
                 }
                 rejects(error)
             } else {
-                createUserAudit(actionBy?actionBy.id:null, doc._id, 'userCreated')
+                createUserAudit(actionBy ? actionBy.id : null, doc._id, 'userCreated')
                 doc.populate('role').populate('groups').execPopulate(() => (resolve(doc))
                 )
             }
@@ -112,7 +111,7 @@ export const updateUser = async function (id, {username, name, email, phone, rol
                     }
                     rejects(error)
                 } else {
-                    createUserAudit(actionBy?actionBy.id:null, doc._id, 'userModified')
+                    createUserAudit(actionBy ? actionBy.id : null, doc._id, 'userModified')
                     doc.populate('role').populate('groups').execPopulate(() => resolve(doc))
                 }
             }
@@ -125,8 +124,8 @@ export const deleteUser = function (id, actionBy = null) {
 
         findUser(id).then((doc) => {
             doc.softdelete(function (err) {
-                createUserAudit(actionBy?actionBy.id:null, doc._id, 'userDeleted')
-                err ? rejects(err) : resolve({id: id, deleteSuccess: true})
+                createUserAudit(actionBy ? actionBy.id : null, doc._id, 'userDeleted')
+                err ? rejects(err) : resolve({success: true, id: id})
             });
         })
 
@@ -188,7 +187,7 @@ export const activationUser = function (id) {
         User.findOneAndUpdate({_id: id}, {active}, (error, user) => {
             if (error) {
                 rejects({status: false, message: "Error al activar el usuario"})
-            } else{
+            } else {
                 createUserAudit(user._id, user._id, 'userActivated')
                 resolve({status: true, message: "Se activo correctamente la cuenta"})
             }
@@ -274,8 +273,8 @@ export const changePassword = function (id, {password, passwordVerify}, actionBy
                     if (error) {
                         rejects({status: false, message: "Falla al intentar modificar password"})
                     } else {
-                        createUserAudit(actionBy.id, id, (actionBy.id === id)?'userPasswordChange':'adminPasswordChange')
-                        resolve({status: true, message: "Password modificada con exito"})
+                        createUserAudit(actionBy.id, id, (actionBy.id === id) ? 'userPasswordChange' : 'adminPasswordChange')
+                        resolve({success: true, message: "PasswordChange", operation: "changePassword"})
                     }
                 }
             );
@@ -339,9 +338,9 @@ export const avatarUpload = async function (user, file) {
         User.findOneAndUpdate(
             {_id: user.id}, {avatar: finalFileName, avatarurl: url}, {useFindAndModify: false},
             (error) => {
-                if (error){
+                if (error) {
                     rejects({status: false, message: "Falla al intentar guardar el avatar en la DB"})
-                }else{
+                } else {
                     createUserAudit(user.id, user.id, 'avatarChange')
                     resolve({filename, mimetype, encoding, url})
                 }
@@ -383,7 +382,7 @@ export const setUsersGroups = function (group, users) {
             if (index !== -1) {
                 users.splice(index, 1)
             } else {
-               // console.log("Deleting user " + oldUser.username + ' for ' + group.id)
+                // console.log("Deleting user " + oldUser.username + ' for ' + group.id)
                 return User.findOneAndUpdate(
                     {_id: oldUser.id},
                     {$pullAll: {groups: [group.id]}},

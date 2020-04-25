@@ -28,7 +28,7 @@ type ActivationUserResponse{
 }
 
 type ChangePasswordResponse{
-    status: Boolean
+    success: Boolean
     message: String
 }
 
@@ -86,7 +86,7 @@ type AvatarFile {
 
 type UserDelete{
     id: ID!
-    deleteSuccess: Boolean!
+    success: Boolean!
 }
 
 type Mutation {

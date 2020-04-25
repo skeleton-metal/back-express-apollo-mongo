@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+
 dotenv.config()
 import mongoose from 'mongoose'
 
@@ -8,4 +9,5 @@ mongoose.set('useCreateIndex', true)
 
 import {initSecurity} from '../services/UserInitService'
 
-initSecurity()
+initSecurity().then(() => process.exit())
+
