@@ -1,10 +1,15 @@
 import {auth,  createUser} from "../../../../src/modules/security/services/UserService";
+import {createRole} from "../../../../src/modules/security/services/RoleService";
 import mongoConnect from "../../../__utils__/mongoConnect";
+
 describe("UserService", () => {
-    let connection = {}
+
+    let connection;
+    let role;
 
     beforeAll(async () => {
         connection = await mongoConnect()
+        role = await createRole( {name: 'admin', permissions: []})
     });
 
     afterAll(async  () => {
@@ -12,27 +17,42 @@ describe("UserService", () => {
         await connection.close();
     })
 
-    test('createUser ok ', async () => {
+
+    test('createUserOk ', async () => {
 
         let userDoc = {
-            id: "5ea4239bd4b3e606ee0d8ae1",
-            _id: "5ea4239bd4b3e606ee0d8ae1",
             username: 'jrambo',
             email: 'jrambo@gmail.com',
             name: 'Jhon Rambo',
-            password: '123'
+            password: '123',
+            role: role.id
         }
-
 
         await expect(createUser(userDoc, null)).resolves.toHaveProperty('username','jrambo')
 
     }, 2000);
 
-    test('Login ok', async () => {
+    test('LoginOk', async () => {
 
         let user = {username: 'jrambo', password: '123'}
 
         await expect(auth(user, null)).resolves.toHaveProperty('token',)
+
+    }, 2000);
+
+    test('LoginFail', async () => {
+
+        let user = {username: 'jrambo', password: '321'}
+
+        await expect(auth(user, null)).rejects.toMatch('BadCredentials');
+
+    }, 2000);
+
+    test('LoginUserDoesntExist', async () => {
+
+        let user = {username: 'jwick', password: '321'}
+
+        await expect(auth(user, null)).rejects.toMatch('UserDoesntExist');
 
     }, 2000);
 })

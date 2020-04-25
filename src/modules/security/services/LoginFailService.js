@@ -1,32 +1,29 @@
 import LoginFail from "../models/LoginFailModel";
 import moment from "moment";
 import DeviceDetector from 'node-device-detector'
-import geoip from 'geoip-lite'
+import geoLookup from "./utils/geoLookup";
+import getMatchIpv4 from "./utils/getMatchIpv4";
 
 const detector = new DeviceDetector;
 
-function getGeo(ip) {
-    let geo = {}
-    if (ip == '::1') {
-        geo = {
-            country: 'Local',
-            region: 'Local',
-            city: 'Local',
-            timezone: '',
-        }
-    } else {
-        geo = geoip.lookup(ip)
-    }
-    return geo;
-}
 
 export const createLoginFail = async function (username, req) {
     return new Promise(((resolve, reject) => {
-        let userAgent = req.headers['user-agent']
-        const result = detector.detect(userAgent);
 
-        let ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress)
-        let geo = getGeo(ip);
+        let userAgent = 'NoAgent'
+        let result = {os: {}, client: {}, device: {}}
+        let ip = '127.0.0.1'
+        let geo = {}
+
+        if (req && req.headers && req.headers['user-agent']) {
+            userAgent = req.headers['user-agent']
+            result = detector.detect(userAgent);
+        }
+
+        if (req && req.headers && (req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
+            ip = getMatchIpv4((req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+            geo = geoLookup(ip);
+        }
 
         const doc = new LoginFail({
             username: username,

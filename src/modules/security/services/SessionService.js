@@ -1,37 +1,17 @@
 import Session from "../models/SessionModel";
 import moment from "moment";
 import DeviceDetector from 'node-device-detector'
-import geoip from 'geoip-lite'
+import geoLookup from "./utils/geoLookup";
+import getMatchIpv4 from "./utils/getMatchIpv4";
 
 const detector = new DeviceDetector;
 
-function getGeo(ip) {
-    let geo = {}
-    if (ip === '127.0.0.1') {
-        geo = {
-            country: 'AR',
-            region: 'Local',
-            city: 'Local',
-            timezone: '',
-        }
-    } else {
-        geo = geoip.lookup(ip)
-    }
-    return geo;
-}
-
-function getIpv4(ip){
-    if(ip === '::1'){
-        return '127.0.0.1'
-    }
-    return ip.match(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/)[0]
-}
 
 export const createSession = async function (user, req) {
     return new Promise(((resolve, reject) => {
 
         //Init values
-        let userAgent = ''
+        let userAgent = 'NoAgent'
         let result = {os: {}, client: {}, device: {}}
         let ip = '127.0.0.1'
         let geo = {}
@@ -42,8 +22,8 @@ export const createSession = async function (user, req) {
         }
 
         if (req && req.headers && (req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
-            ip = getIpv4((req.headers['x-forwarded-for'] || req.connection.remoteAddress))
-            geo = getGeo(ip);
+            ip = getMatchIpv4((req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+            geo = geoLookup(ip);
         }
 
 

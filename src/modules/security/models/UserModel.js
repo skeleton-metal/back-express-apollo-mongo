@@ -38,7 +38,8 @@ const UserSchema = new mongoose.Schema({
     avatarurl: String,
     role: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Role'
+        ref: 'Role',
+        required: true,
     },
     groups: [{
         type: mongoose.Schema.Types.ObjectId,
