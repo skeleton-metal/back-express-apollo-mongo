@@ -34,7 +34,17 @@ export default {
     },
     Mutation: {
         auth: (_, {username, password}, {req}) => {
-            return auth({username, password}, req)
+
+            return new Promise(((resolve, reject) => {
+                auth({username, password}, req)
+                    .then(result => resolve(result))
+                    .catch(err => {
+                        console.warn('Auth error: ', err.message)
+
+                        reject(new AuthenticationError("BadCredentials"))
+                    })
+            }))
+
         },
         createUser: (_, {input}, {user, rbac}) => {
             if (!user || !rbac.isAllowed(user.id, SECURITY_USER_CREATE)) throw new ForbiddenError("Not Authorized")

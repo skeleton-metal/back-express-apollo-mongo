@@ -1,4 +1,4 @@
-import {Sessions} from "../models/SessionModel";
+import Session from "../models/SessionModel";
 import moment from "moment";
 import DeviceDetector from 'node-device-detector'
 import geoip from 'geoip-lite'
@@ -29,14 +29,27 @@ function getIpv4(ip){
 
 export const createSession = async function (user, req) {
     return new Promise(((resolve, reject) => {
-        let userAgent = req.headers['user-agent']
-        const result = detector.detect(userAgent);
 
-        let ip = getIpv4((req.headers['x-forwarded-for'] || req.connection.remoteAddress))
-        let geo = getGeo(ip);
+        //Init values
+        let userAgent = ''
+        let result = {os: {}, client: {}, device: {}}
+        let ip = '127.0.0.1'
+        let geo = {}
 
-        const newSession = new Sessions({
-            user: user.id,
+        if (req && req.headers && req.headers['user-agent']) {
+            userAgent = req.headers['user-agent']
+            result = detector.detect(userAgent);
+        }
+
+        if (req && req.headers && (req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
+            ip = getIpv4((req.headers['x-forwarded-for'] || req.connection.remoteAddress))
+            geo = getGeo(ip);
+        }
+
+
+
+        const newSession = new Session({
+            user: user._id,
             username: user.username,
             agent: userAgent,
             ip: ip,
@@ -61,7 +74,7 @@ export const createSession = async function (user, req) {
 
 
 export const updateSession = async function (user) {
-    Sessions.findOne({_id: user.idSession}).then(doc => {
+    Session.findOne({_id: user.idSession}).then(doc => {
         let now = moment()
         doc.until = now
         doc.duration = now.diff(doc.since, 'seconds')
@@ -79,7 +92,7 @@ function getFromDate(time, unit) {
 
 export const sessionsByUser = async function (time, unit = 'days') {
     return new Promise((resolve, reject) => {
-        Sessions.aggregate(
+        Session.aggregate(
             [
                 {$match: {since: {$gte: getFromDate(time, unit)}}},
                 {
@@ -111,7 +124,7 @@ export const sessionsByUser = async function (time, unit = 'days') {
 
 export const sessionsByCountry = async function (time, unit = 'days') {
     return new Promise((resolve, reject) => {
-        Sessions.aggregate(
+        Session.aggregate(
             [
                 {$match: {since: {$gte: getFromDate(time, unit)}}},
                 {
@@ -131,7 +144,7 @@ export const sessionsByCountry = async function (time, unit = 'days') {
 
 export const sessionsByOs = async function (time, unit = 'days') {
     return new Promise((resolve, reject) => {
-        Sessions.aggregate(
+        Session.aggregate(
             [
                 {$match: {since: {$gte: getFromDate(time, unit)}}},
                 {
@@ -151,7 +164,7 @@ export const sessionsByOs = async function (time, unit = 'days') {
 
 export const sessionsByDeviceType = async function (time, unit = 'days') {
     return new Promise((resolve, reject) => {
-        Sessions.aggregate(
+        Session.aggregate(
             [
                 {$match: {since: {$gte: getFromDate(time, unit)}}},
                 {
@@ -172,7 +185,7 @@ export const sessionsByDeviceType = async function (time, unit = 'days') {
 
 export const sessionsByCity = async function (time, unit = 'days') {
     return new Promise((resolve, reject) => {
-        Sessions.aggregate(
+        Session.aggregate(
             [
                 {$match: {since: {$gte: getFromDate(time, unit)}}},
                 {
@@ -193,7 +206,7 @@ export const sessionsByCity = async function (time, unit = 'days') {
 
 export const sessionsByClient = async function (time, unit = 'days') {
     return new Promise((resolve, reject) => {
-        Sessions.aggregate(
+        Session.aggregate(
             [
                 {$match: {since: {$gte: getFromDate(time, unit)}}},
                 {

@@ -37,15 +37,14 @@ const SessionSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         unique: false,
-        required: true,
-        dropDups: true
+        required: true
     },
     username: {type: String, unique: false, required: false, dropDups: true},
     since: {type: Date, required: true, default: Date.now},
     until: {type: Date, required: true, default: Date.now},
     duration: {type: Number, required: false, default: 0},
     request: {type: Number, required: false, default: 1},
-    agent: {type: String, unique: false, required: true, dropDups: true},
+    agent: {type: String, unique: false, required: false, dropDups: true},
     ip: {type: String, unique: false, required: true, dropDups: true},
     geo: geoSchema,
     device: deviceSchema,
@@ -57,7 +56,4 @@ SessionSchema.set('toJSON', {getters: true});
 
 SessionSchema.plugin(uniqueValidator, {message: '{VALUE} ya existe. {PATH} debe ser unico.'});
 
-module.exports = {
-    Sessions: mongoose.model('Sessions', SessionSchema),
-    SessionSchema: SessionSchema
-};
+export default mongoose.model('Session', SessionSchema);

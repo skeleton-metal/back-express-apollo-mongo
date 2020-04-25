@@ -1,4 +1,4 @@
-import {User} from '../models/UserModel'
+import User from '../models/UserModel'
 import '../models/GroupModel'
 import {createUserAudit} from '../services/UserAuditService'
 import bcryptjs from 'bcryptjs'
@@ -11,12 +11,20 @@ import jsonwebtoken from 'jsonwebtoken'
 import {createSession} from "./SessionService";
 import {createLoginFail} from "./LoginFailService";
 
+export const hashPassword = function (password) {
+    let salt = bcryptjs.genSaltSync(10);
+    let hashPassword = bcryptjs.hashSync(password, salt);
+    return hashPassword;
+}
+
 export const auth = async function ({username, password}, req) {
     return new Promise((resolve, reject) => {
         findUserByUsername(username).then(user => {
+
             if (!user) {
-                reject('No user with that username/email')
+                reject('UserDoesntExist')
             }
+
             if (user) {
 
 
@@ -43,7 +51,7 @@ export const auth = async function ({username, password}, req) {
                     })
                 } else {
                     createLoginFail(username, req)
-                    reject('Incorrect password')
+                    reject('BadCredentials')
                 }
             }
         })
@@ -52,14 +60,15 @@ export const auth = async function ({username, password}, req) {
 
 }
 
+
+
 export const createUser = async function ({username, password, name, email, phone, role, groups, active}, actionBy = null) {
-    let salt = bcryptjs.genSaltSync(10);
-    let hashPassword = bcryptjs.hashSync(password, salt);
+
 
     const newUser = new User({
         username,
         email,
-        password: hashPassword,
+        password: hashPassword(password),
         name,
         phone,
         active,
@@ -131,16 +140,12 @@ export const registerUser = async function ({username, password, name, email, ph
 
     return new Promise((resolve, rejects) => {
 
-        let salt = bcryptjs.genSaltSync(10);
-        let hash = bcryptjs.hashSync(password, salt);
-
         let active = false;
-
 
         const newUser = new User({
             username,
             email,
-            password: hash,
+            password: hashPassword(password),
             name,
             phone,
             active,
@@ -261,12 +266,10 @@ export const changePassword = function (id, {password, passwordVerify}, actionBy
 
     if (password == passwordVerify) {
 
-        let salt = bcryptjs.genSaltSync(10);
-        let hash = bcryptjs.hashSync(password, salt);
 
         return new Promise((resolve, rejects) => {
             User.findOneAndUpdate(
-                {_id: id}, {password: hash}, {new: true},
+                {_id: id}, {password: hashPassword(password)}, {new: true},
                 (error, doc) => {
                     if (error) {
                         rejects({status: false, message: "Falla al intentar modificar password"})

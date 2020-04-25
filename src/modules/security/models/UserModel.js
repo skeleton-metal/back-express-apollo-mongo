@@ -54,4 +54,4 @@ UserSchema.plugin(uniqueValidator, {message: '{VALUE} ya existe. {PATH} debe ser
 UserSchema.plugin(softDelete);
 UserSchema.plugin(mongoosePaginate);
 
-export const User = mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);
