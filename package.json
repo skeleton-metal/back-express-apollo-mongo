@@ -62,6 +62,7 @@
     "babel-jest": "^25.4.0",
     "jest": "^25.4.0",
     "mockingoose": "^2.13.2",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "mongodb-memory-server": "^6.5.2"
   }
 }
