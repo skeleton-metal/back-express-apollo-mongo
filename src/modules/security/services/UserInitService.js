@@ -1,14 +1,14 @@
 import {createRole, findRoleByName} from './RoleService'
 import {createUser, findUserByUsername} from './UserService'
-import {ROLES, INIT_USER_ADMIN} from '../consts'
-
+import {adminRole, operatorRole} from '../roles'
+import {rootUser} from './../init-user'
 function checkOrCreateRoleAdmin() {
 
     return new Promise((resolve, reject) => {
 
-        findRoleByName(ROLES.ADMIN.NAME).then(role => {
+        findRoleByName(adminRole.NAME).then(role => {
             if (!role) {
-                createRole({name: ROLES.ADMIN.NAME, permissions: ROLES.ADMIN.PERMISSIONS}).then(newRole => {
+                createRole({name: adminRole.NAME, permissions: adminRole.PERMISSIONS}).then(newRole => {
                     console.log("RoleModel admin created: ", newRole.id)
                     resolve(newRole)
                 })
@@ -23,9 +23,9 @@ function checkOrCreateRoleAdmin() {
 }
 
 function checkOrCreateRoleOperator() {
-    findRoleByName(ROLES.OPERATOR.NAME).then(roleUser => {
+    findRoleByName(operatorRole.NAME).then(roleUser => {
         if (!roleUser) {
-            createRole({name: ROLES.OPERATOR.NAME, permissions: ROLES.OPERATOR.PERMISSIONS})
+            createRole({name: operatorRole.NAME, permissions: operatorRole.PERMISSIONS})
                 .then(roleUserNew => console.log("RoleModel operator created: ", roleUserNew.id))
                 .catch(err => console.error(err))
         } else {
@@ -41,10 +41,10 @@ export const initSecurity = async function () {
 
     //Admin ROLE
     let roleAdmin = await checkOrCreateRoleAdmin()
-    let user = await findUserByUsername(INIT_USER_ADMIN.username)
+    let user = await findUserByUsername(rootUser.username)
 
     if (!user) {
-        user = await createUser({...INIT_USER_ADMIN, role: roleAdmin.id})
+        user = await createUser({...rootUser, role: roleAdmin.id})
         console.log("User root created: ", user.id)
 
     } else {

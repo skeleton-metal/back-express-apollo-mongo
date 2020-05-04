@@ -8,13 +8,13 @@ mongoose.set('useCreateIndex', true)
 mongoose.set('useFindAndModify', true)
 
 import {findUserByUsername,changePassword} from '../services/UserService'
-import {INIT_USER_ADMIN} from '../consts'
+import {INIT_USER_ADMIN} from '../roles'
 
 findUserByUsername("root").then(rootUser => {
     changePassword(rootUser.id, {
         password: INIT_USER_ADMIN.password,
         passwordVerify: INIT_USER_ADMIN.password
-    }).then(result => {
+    },rootUser).then(result => {
         console.log(result)
         process.exit()
     })
