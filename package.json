@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/skeleton-metal/apollo-server-express#readme",
   "dependencies": {
-    "apollo-server-express": "^2.12.0",
+    "apollo-server-express": "^2.14.2",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.1.0",
     "email-templates": "^6.0.3",
